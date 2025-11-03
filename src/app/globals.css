@@ -1,26 +1,30 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --text-2xs: 0.8rem;
+  --text-2xs--line-height: 1.1rem;
+  --text-xs: 0.868rem;
+  --text-xs--line-height: 1.1875rem;
+  --text-sm: 1.042rem;
+  --text-sm--line-height: 1.375rem;
+  --text-sm--letter-spacing: 0em;
+  --text-base: 1.25rem;
+  --text-base--line-height: 1.6875rem;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: normal;
+  --text-xl: 1.8rem;
+  --text-xl--line-height: normal;
+  --text-2xl: 2.16rem;
+  --text-2xl--line-height: normal;
+  --text-3xl: 2.592rem;
+  --text-3xl--line-height: normal;
+  --text-4xl: 3.11rem;
+  --text-4xl--line-height: normal;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Custom Global CSS */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+h1 {
+  margin: 0px;
+  padding: 0px;
 }
