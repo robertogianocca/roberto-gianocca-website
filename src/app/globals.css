@@ -1,10 +1,44 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --breakpoint-xs: 412px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 769px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1750px;
+
+  --color-player-controls: #f54927;
+
   /* --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono); */
+
+  --text-2xs: 0.8rem;
+  --text-2xs--line-height: 1.1rem;
+  --text-xs: 0.868rem;
+  --text-xs--line-height: 1.1875rem;
+  --text-sm: 1.042rem;
+  --text-sm--line-height: 1.375rem;
+  --text-sm--letter-spacing: 0em;
+  --text-base: 1.25rem;
+  --text-base--line-height: 1.6875rem;
+  --text-lg: 1.5rem;
+  --text-lg--line-height: normal;
+  --text-xl: 1.8rem;
+  --text-xl--line-height: normal;
+  --text-2xl: 2.16rem;
+  --text-2xl--line-height: normal;
+  --text-3xl: 2.592rem;
+  --text-3xl--line-height: normal;
+  --text-4xl: 3.11rem;
+  --text-4xl--line-height: normal;
+}
+
+@layer components {
+  .main-grid {
+    @apply flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 gap-4 xl:gap-8;
+  }
 }
 
 .vimeo-player iframe {
@@ -12,22 +46,6 @@
   height: 100%;
 }
 
-/* CODE FROM PRESET: */
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
