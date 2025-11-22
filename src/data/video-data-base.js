@@ -1,23 +1,23 @@
 export const videoDataBase = [
   {
-    id: "sugar-mama",
+    id: "sugar-mamatr",
     vimeoId: "1132948199",
     title: "Sugar Mama",
     subtitle: "A music video for Matt Pascale & The Stomps",
-    credits: "",
+    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
   },
   {
-    id: "sugar-mama2",
+    id: "sugar-mamag",
     vimeoId: "1132948199",
     title: "Sugar Mama",
-    subtitle: "A music video for Matt Pascale & The Stomps",
-    credits: "",
+    subtitle: "video 2",
+    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
   },
   {
-    id: "sugar-mama3",
+    id: "video-3",
     vimeoId: "1132948199",
     title: "Sugar Mama",
     subtitle: "A music video for Matt Pascale & The Stomps",
-    credits: "",
+    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
   },
 ];
