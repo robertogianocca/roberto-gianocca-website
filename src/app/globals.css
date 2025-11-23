@@ -13,6 +13,7 @@
 
   /* --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono); */
+  --font-inter: var(--font-inter);
 
   --text-2xs: 0.8rem;
   --text-2xs--line-height: 1.1rem;
@@ -37,7 +38,10 @@
 
 @layer components {
   .main-grid {
-    @apply flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 gap-4 xl:gap-8;
+    @apply grid grid-cols-5 gap-6 px-6;
+  }
+  .inside-grid {
+    @apply grid grid-cols-2 gap-6;
   }
 }
 
@@ -47,5 +51,13 @@
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* globals.css */
+h1 {
+  font-family: var(--font-inter);
+}
+
+p {
+  font-family: var(--font-roboto);
 }

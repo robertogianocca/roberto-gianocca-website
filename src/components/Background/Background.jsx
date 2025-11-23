@@ -2,7 +2,7 @@ export default function Background({ color }) {
   return (
     <div className="fixed inset-0 -z-50">
       <div
-        className="absolute inset-0 bg-cover bg-no-repeat filter grayscale"
+        className="absolute inset-0 bg-cover bg-no-repeat filter grayscale brightness-65"
         style={{
           backgroundImage: "url('/textures/texture-background-01.webp')",
         }}

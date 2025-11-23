@@ -5,11 +5,11 @@ import VideoGallery from "@/components/Video/VideoGallery";
 export default function HomePage() {
   return (
     <div>
-      <div className="main-grid">
+      <div className="main-grid ">
         <div className="col-span-1">
           <MenuBar />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4 ">
           <VideoGallery />
         </div>
       </div>

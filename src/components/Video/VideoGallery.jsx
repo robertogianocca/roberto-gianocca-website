@@ -6,14 +6,15 @@ import VideoThumbnails from "./VideoThumbnails";
 
 export default function VideoGallery() {
   const [selectedVideo, setSelectedVideo] = useState(videoDataBase[0]);
-
   return (
-    <div className="grid grid-cols-2">
-      <div className="">
-        <p>{selectedVideo.subtitle}</p>
+    <div className="inside-grid min-h-screen ">
+      <div className="w-full h-full unused:bg-red-500">
+        <VideoThumbnails selectedVideo={selectedVideo} setSelectedVideo={setSelectedVideo} />
       </div>
-      <div>
-        <VideoThumbnails setSelectedVideo={setSelectedVideo} />
+      <div className="sticky top-6 h-min self-start">
+        <h2 className="text-4xl font-semibold mb-4 ">{selectedVideo.title}</h2>
+        <h3 className="text-2xl font-semibold mb-4">{selectedVideo.subtitle}</h3>
+        <div>{selectedVideo.description}</div>
       </div>
     </div>
   );

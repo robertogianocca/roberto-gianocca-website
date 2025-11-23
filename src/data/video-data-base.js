@@ -1,23 +1,44 @@
+import { videoDescriptions } from "./video-descriptions";
+
 export const videoDataBase = [
   {
-    id: "sugar-mamatr",
+    id: "sugar-mama",
     vimeoId: "1132948199",
     title: "Sugar Mama",
     subtitle: "A music video for Matt Pascale & The Stomps",
-    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
+    description: videoDescriptions["sugar-mama"],
+    thumbnail: "/video-thumbnails/sugar-mama-thumb_01.jpg",
   },
   {
-    id: "sugar-mamag",
+    id: "sugar-mamagaaaa",
     vimeoId: "1132948199",
     title: "Sugar Mama",
     subtitle: "video 2",
-    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
+    description: videoDescriptions["sugar-mamatr"],
+    thumbnail: "/video-thumbnails/sugar-mama-thumb_02.jpg",
   },
   {
     id: "video-3",
     vimeoId: "1132948199",
     title: "Sugar Mama",
     subtitle: "A music video for Matt Pascale & The Stomps",
-    description_html: "<p style='color:#f55;'>Rich HTML text…</p>",
+    description: videoDescriptions["sugar-mamatr"],
+    thumbnail: "/video-thumbnails/sugar-mama-thumb_03.jpg",
+  },
+  {
+    id: "video-4",
+    vimeoId: "1132948199",
+    title: "Sugar Mamaaaaasdsa",
+    subtitle: "A music video for Matt Pascale & The Stomps",
+    description: videoDescriptions["sugar-mamatr"],
+    thumbnail: "/video-thumbnails/sugar-mama-thumb_04.jpg",
+  },
+  {
+    id: "video-5",
+    vimeoId: "1132948199",
+    title: "Sugar Mamasdsdaaaas",
+    subtitle: "A music video for Matt Pascale & The Stomps",
+    description: videoDescriptions["sugar-mamatr"],
+    thumbnail: "/video-thumbnails/sugar-mama-thumb_05.jpg",
   },
 ];
