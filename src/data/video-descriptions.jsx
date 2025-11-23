@@ -33,6 +33,15 @@ export const videoDescriptions = {
             className="rounded-b-sm"
           />
         </div>
+        <div className="col-span-2 rounded-sm bg-red-300 shadow-xl/30 overflow-hidden">
+          <Image
+            src="/video/sugar-mama/sugar-mama-backstage-01.webp"
+            alt=""
+            width={3000}
+            height={3000}
+            className="rounded-b-sm"
+          />
+        </div>
       </div>
     </div>
   ),

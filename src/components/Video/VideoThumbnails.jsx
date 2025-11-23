@@ -23,5 +23,5 @@ export default function VideoThumbnails({ selectedVideo, setSelectedVideo }) {
     );
   });
 
-  return <div>{videoThumbnails}</div>;
+  return <div className="grid grid-cols-2 gap-4">{videoThumbnails}</div>;
 }

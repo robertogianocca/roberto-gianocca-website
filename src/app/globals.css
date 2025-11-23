@@ -38,10 +38,20 @@
 
 @layer components {
   .main-grid {
-    @apply grid grid-cols-5 gap-6 px-6;
+    @apply grid grid-cols-5 gap-9;
   }
-  .inside-grid {
-    @apply grid grid-cols-2 gap-6;
+  .content-grid {
+    @apply grid grid-cols-2 gap-9;
+  }
+
+  /* globals.css o app/globals.css */
+  .scrollbar-hide {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
 }
 
