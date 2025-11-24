@@ -5,10 +5,10 @@ import Player from "@vimeo/player";
 import Image from "next/image";
 import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
 
-import volumeHigh from "../../../public/icons/volume-icon-high.svg";
-import volumeLow from "../../../public/icons/volume-icon-low.svg";
-import volumeOff from "../../../public/icons/volume-icon-off.svg";
-import volumeX from "../../../public/icons/volume-icon-x.svg";
+import VolumeX from "./VideoPlayer/VolumeX";
+import VolumeLow from "./VideoPlayer/VolumeLow";
+import VolumeOff from "./VideoPlayer/VolumeOff";
+import VolumeHigh from "./VideoPlayer/VolumeHigh";
 
 export default function VimeoPlayer({ spriteSrc }) {
   const containerRef = useRef(null);
@@ -183,23 +183,10 @@ export default function VimeoPlayer({ spriteSrc }) {
   };
 
   const getVolumeIcon = () => {
-    if (volume === 0) return <Image src={volumeX} alt="volume-x" width={25} height={25} />;
-    if (volume < 0.3) return <Image src={volumeOff} alt="volume-off" width={25} height={25} />;
-    if (volume < 0.7)
-      return (
-        <svg
-          width="24"
-          height="24"
-          className="text-player-controls"
-          fill="currentColor"
-          viewBox="0 0 600 600"
-        >
-          <path d="M501.6,5.392c-10.3-8.4-25.4-6.8-33.8,3.5-8.4,10.3-6.8,25.4,3.5,33.8,54.2,44,88.7,111,88.7,186.2s-34.5,142.2-88.7,186.3c-10.3,8.4-11.8,23.5-3.5,33.8,8.3,10.3,23.5,11.8,33.8,3.5,64.9-52.9,106.4-133.4,106.4-223.6S566.5,58.092,501.6,5.392ZM441.1,79.892c-10.3-8.4-25.4-6.8-33.8,3.5-8.4,10.3-6.8,25.4,3.5,33.8,32.5,26.4,53.2,66.6,53.2,111.7s-20.7,85.3-53.2,111.8c-10.3,8.4-11.8,23.5-3.5,33.8,8.3,10.3,23.5,11.8,33.8,3.5,43.2-35.2,70.9-88.9,70.9-149s-27.7-113.8-70.9-149v-.1ZM380.6,154.392c-10.3-8.4-25.4-6.8-33.8,3.5-8.4,10.3-6.8,25.4,3.5,33.8,10.8,8.8,17.7,22.2,17.7,37.2s-6.9,28.4-17.7,37.3c-10.3,8.4-11.8,23.5-3.5,33.8,8.3,10.3,23.5,11.8,33.8,3.5,21.5-17.7,35.4-44.5,35.4-74.6s-13.9-56.9-35.4-74.5ZM48,324.892h48l134.1,119.2c6.4,5.7,14.6,8.8,23.1,8.8,19.2,0,34.8-15.6,34.8-34.8V39.692c0-19.2-15.6-34.8-34.8-34.8-8.5,0-16.7,3.1-23.1,8.8l-134.1,119.2h-48c-26.5,0-48,21.5-48,48v96c0,26.5,21.5,48,48,48Z" />
-        </svg>
-      );
-    return (
-      <Image src={volumeHigh} alt="volume-high" width={25} height={25} className="color-red-300" />
-    );
+    if (volume === 0) return <VolumeX />;
+    if (volume < 0.3) return <VolumeOff />;
+    if (volume < 0.7) return <VolumeLow />;
+    return <VolumeHigh />;
   };
 
   const formatTime = (seconds) => {
@@ -212,8 +199,8 @@ export default function VimeoPlayer({ spriteSrc }) {
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className={`mx-auto relative ${
-        fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl p-4"
+      className={`max-w-full   ${
+        fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl"
       } unused:bg-gray-700`}
     >
       {/* VIDEO WRAPPER */}
@@ -254,7 +241,7 @@ export default function VimeoPlayer({ spriteSrc }) {
         )}
 
         {/* ========== FULLSCREEN OVERLAY CONTROLS ========== */}
-        {fullscreen && (
+        {
           <div
             className={`absolute bottom-0 left-0 w-full z-30 text-white transition-opacity duration-300 ${
               showControls ? "opacity-100" : "opacity-0"
@@ -293,7 +280,7 @@ export default function VimeoPlayer({ spriteSrc }) {
               </div>
 
               {/* Timestamp */}
-              <span className="text-sm">
+              <span className="text-xs text-green-500">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
 
@@ -301,10 +288,10 @@ export default function VimeoPlayer({ spriteSrc }) {
             </div>
 
             {/* Progress Bar */}
-            <div className="px-4 pb-4">
+            <div className={`${fullscreen && "pb-8 px-4"} `}>
               <div
                 ref={progressBarRef}
-                className="h-2 bg-gray-500 rounded cursor-pointer relative group"
+                className="h-1 bg-green-900 cursor-pointer relative group"
                 onClick={handleProgressChange}
                 onMouseMove={handleProgressHover}
                 onMouseLeave={handleProgressLeave}
@@ -314,24 +301,24 @@ export default function VimeoPlayer({ spriteSrc }) {
               >
                 {/* Progress */}
                 <div
-                  className="h-full bg-green-500 rounded"
+                  className="h-full bg-green-500 "
                   style={{ width: `${(currentTime / duration) * 100}%` }}
                 />
 
                 {/* Handle */}
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full opacity-0 group-hover:opacity-100"
+                {/* <div
+                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500  opacity-0 group-hover:opacity-100"
                   style={{
                     left: `${(currentTime / duration) * 100}%`,
                     marginLeft: "-6px",
                   }}
-                />
+                /> */}
 
                 {/* Hover preview */}
                 {hoverTime !== null && (
                   <>
                     <div
-                      className="absolute top-0 left-0 h-full bg-green-300 opacity-50"
+                      className="absolute top-0 left-0 h-full bg-green-500 "
                       style={{ width: `${(hoverTime / duration) * 100}%` }}
                     />
                     <div
@@ -347,7 +334,7 @@ export default function VimeoPlayer({ spriteSrc }) {
                 {/* Hover timestamp */}
                 {hoverTime !== null && (
                   <div
-                    className="absolute -top-8 text-xs bg-black text-white px-2 py-1 rounded"
+                    className="absolute -top-8 text-xs bg-black text-green-500 px-2 py-1 rounded"
                     style={{
                       left: `${hoverX}%`,
                       transform: "translateX(-50%)",
@@ -378,130 +365,8 @@ export default function VimeoPlayer({ spriteSrc }) {
               </div>
             </div>
           </div>
-        )}
+        }
       </div>
-
-      {/* ========== NORMAL MODE CONTROLS BELOW VIDEO ========== */}
-
-      {!fullscreen && (
-        <div
-          className={`flex flex-col mt-2 text-white rounded transition-opacity duration-300 ${
-            showControls ? "opacity-100" : "opacity-0 pointer-events-none"
-          } bg-gray-700`}
-        >
-          <div className="flex justify-between items-center px-4 py-2">
-            {/* Volume */}
-            <div
-              ref={volumeContainerRef}
-              onMouseEnter={handleVolumeContainerMouseEnter}
-              onMouseLeave={handleVolumeContainerMouseLeave}
-              className="flex items-center space-x-2"
-            >
-              <button onClick={toggleMute} className="p-1">
-                {getVolumeIcon()}
-              </button>
-
-              <div
-                ref={volumeSliderRef}
-                className={`transition-all duration-200 flex items-center ${
-                  showVolumeSlider ? "w-20 opacity-100" : "w-0 opacity-0"
-                }`}
-                onMouseLeave={handleVolumeSliderMouseLeave}
-              >
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={volume}
-                  onChange={changeVolume}
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            {/* Time */}
-            <span>
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </span>
-
-            <button onClick={toggleFullscreen}>⛶</button>
-          </div>
-
-          {/* Progress bar */}
-          <div className="px-4 pb-2">
-            <div
-              ref={progressBarRef}
-              className="h-2 bg-gray-500 rounded relative cursor-pointer group"
-              onClick={handleProgressChange}
-              onMouseMove={handleProgressHover}
-              onMouseLeave={handleProgressLeave}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              <div
-                className="h-full bg-green-500 rounded"
-                style={{ width: `${(currentTime / duration) * 100}%` }}
-              />
-
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full opacity-0 group-hover:opacity-100"
-                style={{
-                  left: `${(currentTime / duration) * 100}%`,
-                  marginLeft: "-6px",
-                }}
-              />
-
-              {hoverTime !== null && (
-                <>
-                  <div
-                    className="absolute top-0 left-0 h-full bg-green-300 opacity-50"
-                    style={{ width: `${(hoverTime / duration) * 100}%` }}
-                  />
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full"
-                    style={{
-                      left: `${hoverX}%`,
-                      marginLeft: "-6px",
-                    }}
-                  />
-                </>
-              )}
-
-              {hoverTime !== null && (
-                <div
-                  className="absolute -top-8 text-xs bg-black text-white px-2 py-1 rounded"
-                  style={{
-                    left: `${hoverX}%`,
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  {formatTime(hoverTime)}
-                </div>
-              )}
-
-              {hoverTime !== null && spriteSrc && (
-                <div
-                  className="absolute -top-32 w-40 h-22 overflow-hidden border-2 border-white rounded-lg shadow-lg"
-                  style={{
-                    left: `${hoverX}%`,
-                    transform: "translateX(-50%)",
-                  }}
-                >
-                  <Image
-                    src={spriteSrc}
-                    alt="Thumbnail"
-                    width={320}
-                    height={180}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

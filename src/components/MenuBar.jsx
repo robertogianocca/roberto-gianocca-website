@@ -1,8 +1,8 @@
 export default function MenuBar() {
   return (
-    <nav className="sticky top-6 flex flex-col justify-center text-green-400 opacity-45">
+    <nav className="flex flex-col justify-center text-green-400 opacity-45">
       <div>
-        <ul className="text-2xl">
+        <ul className="text-2xl pb-10">
           <li>Video</li>
           <li>Contact</li>
         </ul>

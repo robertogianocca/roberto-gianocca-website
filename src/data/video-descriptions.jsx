@@ -3,7 +3,7 @@ import Image from "next/image";
 export const videoDescriptions = {
   "sugar-mama": (
     <div className="relative aspect-auto">
-      <p className="text-amber-200 mb-4">
+      <p className="text-amber-200 mb-4 mt-4">
         Composers: Mattia Pascale – Matteo Magnaterra – Fabrizio GrossiDirector: Roberto
         GianoccaAssistant Director: Shondel BerviniEditing: Roberto GianoccaExecutive Producers:
         Roberto Gianocca, Paolo MaspoliStyling & Costumes: Shondel BerviniMake-up & Hair: Sofia
@@ -33,16 +33,8 @@ export const videoDescriptions = {
             className="rounded-b-sm"
           />
         </div>
-        <div className="col-span-2 rounded-sm bg-red-300 shadow-xl/30 overflow-hidden">
-          <Image
-            src="/video/sugar-mama/sugar-mama-backstage-01.webp"
-            alt=""
-            width={3000}
-            height={3000}
-            className="rounded-b-sm"
-          />
-        </div>
       </div>
+      <div className="py-6"></div>
     </div>
   ),
 };

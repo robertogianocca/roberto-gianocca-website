@@ -212,8 +212,8 @@ export default function VimeoPlayer({ spriteSrc }) {
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className={`mx-auto relative ${
-        fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl p-4"
+      className={`max-w-full   ${
+        fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl"
       } unused:bg-gray-700`}
     >
       {/* VIDEO WRAPPER */}
@@ -254,7 +254,7 @@ export default function VimeoPlayer({ spriteSrc }) {
         )}
 
         {/* ========== FULLSCREEN OVERLAY CONTROLS ========== */}
-        {fullscreen && (
+        {
           <div
             className={`absolute bottom-0 left-0 w-full z-30 text-white transition-opacity duration-300 ${
               showControls ? "opacity-100" : "opacity-0"
@@ -301,7 +301,7 @@ export default function VimeoPlayer({ spriteSrc }) {
             </div>
 
             {/* Progress Bar */}
-            <div className="px-4 pb-4">
+            <div className={`${fullscreen && "pb-4 px-4"} `}>
               <div
                 ref={progressBarRef}
                 className="h-2 bg-gray-500 rounded cursor-pointer relative group"
@@ -378,7 +378,7 @@ export default function VimeoPlayer({ spriteSrc }) {
               </div>
             </div>
           </div>
-        )}
+        }
       </div>
 
       {/* ========== NORMAL MODE CONTROLS BELOW VIDEO ========== */}
