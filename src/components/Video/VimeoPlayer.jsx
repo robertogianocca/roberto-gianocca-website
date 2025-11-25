@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Player from "@vimeo/player";
 import Image from "next/image";
-import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
 
+import Player from "@vimeo/player";
+
+import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
 import VolumeX from "./VideoPlayer/VolumeX";
 import VolumeLow from "./VideoPlayer/VolumeLow";
 import VolumeOff from "./VideoPlayer/VolumeOff";
