@@ -5,10 +5,10 @@ import Image from "next/image";
 
 import Player from "@vimeo/player";
 
-import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
-
 import PlayerVolume from "./PlayerVolume";
 
+import PlayButton from "./VimeoPlayerIcons/PlayButton";
+import PauseButton from "./VimeoPlayerIcons/PauseButton";
 import FullScreen from "./VimeoPlayerIcons/FullScreen";
 
 export default function VimeoPlayer({ vimeoId, spriteSrc }) {
@@ -239,18 +239,18 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
         {!playing && (
           <button
             onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/50 rounded-full z-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full z-20"
           >
-            <FaCirclePlay size="90px" />
+            <PlayButton />
           </button>
         )}
 
         {playing && showControls && (
           <button
             onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/50 rounded-full z-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full z-20"
           >
-            <FaCirclePause size="90px" />
+            <PauseButton />
           </button>
         )}
 
@@ -311,16 +311,6 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
                   style={{ width: `${(currentTime / duration) * 100}%` }}
                 />
 
-                {/* Handle */}
-                {/* <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-green-500  opacity-0 group-hover:opacity-100"
-                  style={{
-                    left: `${(currentTime / duration) * 100}%`,
-                    marginLeft: "-6px",
-                  }}
-                /> */}
-
-                {/* Hover preview */}
                 {hoverTime !== null && (
                   <>
                     <div
