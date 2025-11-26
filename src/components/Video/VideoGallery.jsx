@@ -18,8 +18,10 @@ export default function VideoGallery() {
         <VimeoPlayer vimeoId={selectedVideo.vimeoId} />
 
         {/* ------------------------------------------ */}
-        <h2 className="text-2xl mb-0 mt-5 ">{selectedVideo.title}</h2>
-        <h3 className="text-xl mb-4">{selectedVideo.subtitle}</h3>
+        <div className="flex items-baseline gap-8 mt-3 text-credits">
+          <h2 className="text-3xl">{selectedVideo.title}</h2>
+          <h3 className="text-base">{selectedVideo.subtitle}</h3>
+        </div>
         <div>{selectedVideo.description}</div>
       </div>
     </div>

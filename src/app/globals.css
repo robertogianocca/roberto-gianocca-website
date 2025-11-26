@@ -19,6 +19,7 @@
 
   /* ========== FONT ========== */
   --font-inter: var(--font-inter);
+  --font-jet-brains: var(--font-jet-brains);
 
   /* ========== TEXT ========== */
   --text-2xs: 0.8rem;
@@ -91,10 +92,3 @@ body {
 }
 
 /* globals.css */
-h1 {
-  font-family: var(--font-inter);
-}
-
-p {
-  font-family: var(--font-roboto);
-}
