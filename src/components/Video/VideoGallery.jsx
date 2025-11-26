@@ -1,6 +1,6 @@
 "use client";
 
-import VimeoPlayer from "@/components/Video/VimeoPlayer";
+import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 import { useState } from "react";
 import { videoDataBase } from "@/data/video-data-base";
 import VideoThumbnails from "./VideoThumbnails";

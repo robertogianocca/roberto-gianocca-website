@@ -7,11 +7,9 @@ import Player from "@vimeo/player";
 
 import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
 
-import VolumeX from "./VideoPlayer/VideoPlayerIcons/VolumeX";
-import VolumeOff from "./VideoPlayer/VideoPlayerIcons/VolumeOff";
-import VolumeLow from "./VideoPlayer/VideoPlayerIcons/VolumeLow";
-import VolumeHigh from "./VideoPlayer/VideoPlayerIcons/VolumeHigh";
-import FullScreen from "./VideoPlayer/VideoPlayerIcons/FullScreen";
+import PlayerVolume from "./PlayerVolume";
+
+import FullScreen from "./VimeoPlayerIcons/FullScreen";
 
 export default function VimeoPlayer({ vimeoId, spriteSrc }) {
   //
@@ -156,17 +154,19 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     }
   };
 
+  // LOGICA VOLUME
   const changeVolume = (e) => {
     const v = parseFloat(e.target.value);
     playerInstanceRef.current?.setVolume(v);
+
     setVolume(v);
     if (v > 0) setPreviousVolume(v);
   };
 
   const toggleMute = () => {
     if (!playerInstanceRef.current) return;
+
     if (volume > 0) {
-      setPreviousVolume(volume);
       playerInstanceRef.current.setVolume(0);
       setVolume(0);
     } else {
@@ -185,6 +185,8 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     if (volumeContainerRef.current?.contains(e.relatedTarget)) return;
     setShowVolumeSlider(false);
   };
+
+  // --------
 
   const handleTouchStart = (e) => {
     setIsDraggingProgress(true);
@@ -264,43 +266,18 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
             {/* Top Row */}
             <div className="flex justify-between items-center px-4 pt-3 pb-1">
               {/* Volume */}
-              <div
-                ref={volumeContainerRef}
-                onMouseEnter={handleVolumeContainerMouseEnter}
-                onMouseLeave={handleVolumeContainerMouseLeave}
-                // className="flex items-center"
-                className={`flex items-center ${fullscreen && "pl-130"}`}
-              >
-                <button onClick={toggleMute} className="">
-                  {volume === 0 ? (
-                    <VolumeX />
-                  ) : volume < 0.3 ? (
-                    <VolumeOff />
-                  ) : volume < 0.7 ? (
-                    <VolumeLow />
-                  ) : (
-                    <VolumeHigh />
-                  )}
-                </button>
-                {/* Volume Bar */}
-                <div
-                  ref={volumeSliderRef}
-                  className={`transition-all duration-200 flex items-center translate-y-[-3px] pl-2  ${
-                    showVolumeSlider ? "w-30 opacity-100" : "w-0 opacity-0"
-                  }`}
-                  onMouseLeave={handleVolumeSliderMouseLeave}
-                >
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={volume}
-                    onChange={changeVolume}
-                    className="w-full volume-slider"
-                  />
-                </div>
-              </div>
+              <PlayerVolume
+                volume={volume}
+                showVolumeSlider={showVolumeSlider}
+                onToggleMute={toggleMute}
+                onVolumeChange={changeVolume}
+                onEnterContainer={handleVolumeContainerMouseEnter}
+                onLeaveContainer={handleVolumeContainerMouseLeave}
+                onLeaveSlider={handleVolumeSliderMouseLeave}
+                volumeContainerRef={volumeContainerRef}
+                volumeSliderRef={volumeSliderRef}
+                fullscreen={fullscreen}
+              />
 
               {/* Timestamp */}
               <span className="text-xs text-green-500 absolute left-1/2 -translate-x-1/2 pb-1">
