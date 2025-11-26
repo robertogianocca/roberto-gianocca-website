@@ -226,7 +226,7 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
         {/* Vimeo iframe */}
         <div
           ref={playerRef}
-          className={`vimeo-player w-full h-full ${fullscreen ? "absolute inset-0" : ""}`}
+          className={` vimeo-player w-full h-full ${fullscreen ? "absolute inset-0" : ""}`}
         ></div>
 
         {/* Overlay click area */}
@@ -239,7 +239,7 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
         {!playing && (
           <button
             onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full z-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
           >
             <PlayButton />
           </button>
@@ -248,7 +248,7 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
         {playing && showControls && (
           <button
             onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full z-20"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
           >
             <PauseButton />
           </button>

@@ -1,15 +1,23 @@
 import Image from "next/image";
+import CreditsName from "../components/Credits/CreditsName";
 
 export const videoDescriptions = {
   "sugar-mama": (
     <div className="relative aspect-auto">
-      <p className="text-amber-200 mb-4 mt-4">
-        Composers: Mattia Pascale – Matteo Magnaterra – Fabrizio GrossiDirector: Roberto
-        GianoccaAssistant Director: Shondel BerviniEditing: Roberto GianoccaExecutive Producers:
-        Roberto Gianocca, Paolo MaspoliStyling & Costumes: Shondel BerviniMake-up & Hair: Sofia
-        BuobMatt PascaleSofia BuobShondel BerviniCasino di Campione d'ItaliaSalone delle Feste –
-        Campione d'ItaliaRistorante di Riviera – AFM RivieraPalazzo dell'Arch. Mario BottaSilver
-        EventsElia SquartiniCasino di Campione d'ItaliaGianni MuggeoAndrea ZanniGiulia Campiglia
+      <p className="text-credits mb-4 mt-4">
+        Song Composers:
+        <CreditsName>Mattia Pascale - Matteo Magnaterra - Fabrizio Grossi </CreditsName>
+        Video Director:<CreditsName>Roberto Gianocca</CreditsName> Assistant Director:
+        <CreditsName>Shondel Bervini</CreditsName> Editing & Post-production:
+        <CreditsName>Roberto Gianocca</CreditsName> Executive Producers:
+        <CreditsName>Roberto Gianocca - Paolo Maspoli</CreditsName>
+        Styling & Costumes: <CreditsName>Shondel Bervini</CreditsName> Make-up & Hair:
+        <CreditsName>Sofia Buob</CreditsName> Performers:
+        <CreditsName>Matt Pascale - Sofia Buob - Shondel Bervini</CreditsName> Special Thanks:
+        <CreditsName>
+          Elia Squartini - Gianni Muggeo - Andrea Zanni - Alan Fraquelli - Maurizio Faggi - Giulia
+          Campiglia - Wabi the Dog
+        </CreditsName>
       </p>
       <div className="grid grid-cols-2 gap-4">
         <p>

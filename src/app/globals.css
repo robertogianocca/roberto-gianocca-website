@@ -4,6 +4,9 @@
   /*
   /* ========== COLORS ========== */
   --color-player-controls: oklch(72.3% 0.219 149.579);
+  --color-credits: #36a9c3;
+  --color-credits-name: #ff97f5;
+  --space-credits-space: 10px:
 
   /* ========== BREAKPOINT ========== */
   --breakpoint-xs: 412px;
