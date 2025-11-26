@@ -3,7 +3,7 @@
 @theme {
   /*
   /* ========== COLORS ========== */
-  --color-player-controls: #f54927;
+  --color-player-controls: oklch(72.3% 0.219 149.579);
 
   /* ========== BREAKPOINT ========== */
   --breakpoint-xs: 412px;
@@ -56,6 +56,27 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+
+  .volume-slider {
+    /* sfondo */
+    @apply appearance-none bg-green-900 h-1 w-1;
+  }
+  /* pallina */
+  .volume-slider::-webkit-slider-thumb {
+    @apply appearance-none h-2 w-2  bg-green-500 cursor-pointer;
+  }
+
+  /* .volume-slider::-moz-range-thumb {
+    @apply h-3 w-3 rounded-full bg-red-500 cursor-pointer border-0;
+  } */
+
+  /* .volume-slider::-webkit-slider-track {
+    @apply bg-gray-600 rounded-lg;
+  }
+
+  .volume-slider::-moz-range-track {
+    @apply bg-gray-600 rounded-lg border-0;
+  } */
 }
 
 .vimeo-player iframe {

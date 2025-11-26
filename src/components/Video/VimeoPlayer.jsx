@@ -6,12 +6,15 @@ import Image from "next/image";
 import Player from "@vimeo/player";
 
 import { FaCirclePlay, FaCirclePause } from "react-icons/fa6";
-import VolumeX from "./VideoPlayer/VolumeX";
-import VolumeLow from "./VideoPlayer/VolumeLow";
-import VolumeOff from "./VideoPlayer/VolumeOff";
-import VolumeHigh from "./VideoPlayer/VolumeHigh";
 
-export default function VimeoPlayer({ spriteSrc }) {
+import VolumeX from "./VideoPlayer/VideoPlayerIcons/VolumeX";
+import VolumeOff from "./VideoPlayer/VideoPlayerIcons/VolumeOff";
+import VolumeLow from "./VideoPlayer/VideoPlayerIcons/VolumeLow";
+import VolumeHigh from "./VideoPlayer/VideoPlayerIcons/VolumeHigh";
+import FullScreen from "./VideoPlayer/VideoPlayerIcons/FullScreen";
+
+export default function VimeoPlayer({ vimeoId, spriteSrc }) {
+  //
   const containerRef = useRef(null);
   const playerRef = useRef(null);
   const volumeSliderRef = useRef(null);
@@ -29,7 +32,6 @@ export default function VimeoPlayer({ spriteSrc }) {
   const [showControls, setShowControls] = useState(true);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
-  const videoId = 1132948199;
   const playerInstanceRef = useRef(null);
   const hideControlsTimeout = useRef(null);
   const progressBarRef = useRef(null);
@@ -38,7 +40,7 @@ export default function VimeoPlayer({ spriteSrc }) {
     if (!playerRef.current) return;
 
     const vimeoPlayer = new Player(playerRef.current, {
-      id: videoId,
+      id: vimeoId,
       width: 640,
       controls: false,
       volume: 1,
@@ -77,6 +79,22 @@ export default function VimeoPlayer({ spriteSrc }) {
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (playerInstanceRef.current && vimeoId) {
+      playerInstanceRef.current
+        .loadVideo(vimeoId)
+        .then(() => {
+          // Opzionale: resetta lo stato quando cambia video
+          setCurrentTime(0);
+          setPlaying(false);
+          playerInstanceRef.current.getDuration().then((d) => setDuration(d));
+        })
+        .catch((error) => {
+          console.error("Error loading video:", error);
+        });
+    }
+  }, [vimeoId]);
 
   const startHideControlsTimer = () => {
     clearHideControlsTimer();
@@ -183,13 +201,6 @@ export default function VimeoPlayer({ spriteSrc }) {
     if (playing) startHideControlsTimer();
   };
 
-  const getVolumeIcon = () => {
-    if (volume === 0) return <VolumeX />;
-    if (volume < 0.3) return <VolumeOff />;
-    if (volume < 0.7) return <VolumeLow />;
-    return <VolumeHigh />;
-  };
-
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = String(Math.floor(seconds % 60)).padStart(2, "0");
@@ -241,30 +252,41 @@ export default function VimeoPlayer({ spriteSrc }) {
           </button>
         )}
 
-        {/* ========== FULLSCREEN OVERLAY CONTROLS ========== */}
+        {/* ========== OVERLAY CONTROLS ========== */}
         {
           <div
-            className={`absolute bottom-0 left-0 w-full z-30 text-white transition-opacity duration-300 ${
+            className={`absolute bottom-0 left-0 w-full z-30 text-white transition-opacity duration-600 ${
               showControls ? "opacity-100" : "opacity-0"
-            } bg-black/60 backdrop-blur-sm`}
+            } ${
+              showControls & fullscreen && "bg-black pt-2"
+            }  bg-gradient-to-t from-black/100 via-black/40 via-80% to-transparent`}
           >
             {/* Top Row */}
-            <div className="flex justify-between items-center px-4 py-3">
+            <div className="flex justify-between items-center px-4 pt-3 pb-1">
               {/* Volume */}
               <div
                 ref={volumeContainerRef}
                 onMouseEnter={handleVolumeContainerMouseEnter}
                 onMouseLeave={handleVolumeContainerMouseLeave}
-                className="flex items-center space-x-2"
+                // className="flex items-center"
+                className={`flex items-center ${fullscreen && "pl-130"}`}
               >
-                <button onClick={toggleMute} className="p-1">
-                  {getVolumeIcon()}
+                <button onClick={toggleMute} className="">
+                  {volume === 0 ? (
+                    <VolumeX />
+                  ) : volume < 0.3 ? (
+                    <VolumeOff />
+                  ) : volume < 0.7 ? (
+                    <VolumeLow />
+                  ) : (
+                    <VolumeHigh />
+                  )}
                 </button>
-
+                {/* Volume Bar */}
                 <div
                   ref={volumeSliderRef}
-                  className={`transition-all duration-200 flex items-center ${
-                    showVolumeSlider ? "w-20 opacity-100" : "w-0 opacity-0"
+                  className={`transition-all duration-200 flex items-center translate-y-[-3px] pl-2  ${
+                    showVolumeSlider ? "w-30 opacity-100" : "w-0 opacity-0"
                   }`}
                   onMouseLeave={handleVolumeSliderMouseLeave}
                 >
@@ -275,21 +297,27 @@ export default function VimeoPlayer({ spriteSrc }) {
                     step="0.01"
                     value={volume}
                     onChange={changeVolume}
-                    className="w-full"
+                    className="w-full volume-slider"
                   />
                 </div>
               </div>
 
               {/* Timestamp */}
-              <span className="text-xs text-green-500">
+              <span className="text-xs text-green-500 absolute left-1/2 -translate-x-1/2 pb-1">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
 
-              <button onClick={toggleFullscreen}>⛶</button>
+              {/* Fullscreen button */}
+              <button
+                onClick={toggleFullscreen}
+                className={`translate-y-[-0px] ${fullscreen && "pr-130"}`}
+              >
+                <FullScreen />
+              </button>
             </div>
 
             {/* Progress Bar */}
-            <div className={`${fullscreen && "pb-8 px-4"} `}>
+            <div className={`${fullscreen && "pb-8 px-4 py-2 m-auto w-3/5"} `}>
               <div
                 ref={progressBarRef}
                 className="h-1 bg-green-900 cursor-pointer relative group"
