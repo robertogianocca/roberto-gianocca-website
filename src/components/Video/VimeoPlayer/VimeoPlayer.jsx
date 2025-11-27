@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 
 import Player from "@vimeo/player";
@@ -12,7 +12,6 @@ import PauseButton from "./VimeoPlayerIcons/PauseButton";
 import FullScreen from "./VimeoPlayerIcons/FullScreen";
 
 export default function VimeoPlayer({ vimeoId, spriteSrc }) {
-  //
   const containerRef = useRef(null);
   const playerRef = useRef(null);
   const volumeSliderRef = useRef(null);
@@ -30,9 +29,18 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
   const [showControls, setShowControls] = useState(true);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
+  // Nuovi stati per il cursore personalizzato
+  const [showCustomCursor, setShowCustomCursor] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isInExclusionZone, setIsInExclusionZone] = useState(false);
+
+  // Configurazione zona di esclusione (puoi modificare questo valore)
+  const EXCLUSION_ZONE_HEIGHT = 90; // px dal fondo
+
   const playerInstanceRef = useRef(null);
   const hideControlsTimeout = useRef(null);
   const progressBarRef = useRef(null);
+  const mouseMoveTimeout = useRef(null);
 
   useEffect(() => {
     if (!playerRef.current) return;
@@ -83,7 +91,6 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
       playerInstanceRef.current
         .loadVideo(vimeoId)
         .then(() => {
-          // Opzionale: resetta lo stato quando cambia video
           setCurrentTime(0);
           setPlaying(false);
           playerInstanceRef.current.getDuration().then((d) => setDuration(d));
@@ -94,9 +101,13 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     }
   }, [vimeoId]);
 
+  // qui viene gestito il tempo di sparizione di tutti i controlli.
   const startHideControlsTimer = () => {
     clearHideControlsTimer();
-    hideControlsTimeout.current = setTimeout(() => setShowControls(false), 1500);
+    hideControlsTimeout.current = setTimeout(() => {
+      setShowControls(false);
+      setShowCustomCursor(false);
+    }, 1500);
   };
 
   const clearHideControlsTimer = () => {
@@ -112,10 +123,59 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     }
   };
 
-  const handleMouseMove = () => {
+  // FUNZIONE PER VERIFICARE SE IL MOUSE È NELLA ZONA DI ESCLUSIONE
+  const checkIfInExclusionZone = useCallback((clientY, containerRect) => {
+    if (!containerRect) return false;
+
+    // Calcola la distanza dal fondo del container
+    const distanceFromBottom = containerRect.bottom - clientY;
+
+    // Se il mouse è entro EXCLUSION_ZONE_HEIGHT pixel dal fondo, è nella zona di esclusione
+    return distanceFromBottom <= EXCLUSION_ZONE_HEIGHT;
+  }, []);
+
+  // MODIFICHE PER IL CURSORE PERSONALIZZATO
+  const handleMouseEnter = () => {
+    setShowCustomCursor(true);
     setShowControls(true);
-    if (playing) startHideControlsTimer();
   };
+
+  const handleMouseLeave = () => {
+    setShowCustomCursor(false);
+    setShowControls(false);
+    setIsInExclusionZone(false);
+    clearHideControlsTimer();
+  };
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      setShowControls(true);
+
+      // Ottieni le dimensioni del container
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+
+      // Verifica se il mouse è nella zona di esclusione
+      const inExclusionZone = checkIfInExclusionZone(e.clientY, containerRect);
+      setIsInExclusionZone(inExclusionZone);
+
+      // Mostra il cursore custom solo se NON è nella zona di esclusione
+      if (!inExclusionZone) {
+        setShowCustomCursor(true);
+        setCursorPosition({
+          x: e.clientX,
+          y: e.clientY,
+        });
+      } else {
+        setShowCustomCursor(false);
+      }
+
+      if (playing) {
+        startHideControlsTimer();
+      }
+    },
+    [playing, checkIfInExclusionZone]
+  );
 
   const handleProgressChange = (e) => {
     if (!playerInstanceRef.current) return;
@@ -213,10 +273,32 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
-      className={`max-w-full   ${
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`max-w-full relative ${
         fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl"
-      } unused:bg-gray-700`}
+      } unused:bg-gray-700 ${showCustomCursor && !isInExclusionZone ? "cursor-none" : ""}`}
     >
+      {/* CURSORE PERSONALIZZATO */}
+      {showCustomCursor && !isInExclusionZone && (
+        <div
+          className="fixed z-50 pointer-events-none mix-blend-exclusion transition-transform duration-100"
+          style={{
+            left: cursorPosition.x,
+            top: cursorPosition.y,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <div className="rounded-full  backdrop-blur-sm">
+            {playing ? (
+              <PauseButton className="w-6 h-6 text-white" />
+            ) : (
+              <PlayButton className="w-6 h-6 text-white" />
+            )}
+          </div>
+        </div>
+      )}
+
       {/* VIDEO WRAPPER */}
       <div
         className={`relative w-full ${fullscreen ? "h-screen" : "aspect-video"} ${
@@ -234,25 +316,6 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
           className="absolute inset-0 z-10"
           onClick={() => !isDraggingProgress && togglePlay()}
         ></div>
-
-        {/* Center Play/Pause */}
-        {!playing && (
-          <button
-            onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
-          >
-            <PlayButton />
-          </button>
-        )}
-
-        {playing && showControls && (
-          <button
-            onClick={togglePlay}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
-          >
-            <PauseButton />
-          </button>
-        )}
 
         {/* ========== OVERLAY CONTROLS ========== */}
         {
