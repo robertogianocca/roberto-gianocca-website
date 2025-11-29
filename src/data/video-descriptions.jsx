@@ -1,5 +1,6 @@
 import Image from "next/image";
 import CreditsName from "../components/Credits/CreditsName";
+import ImageCarousel from "../components/ImageCarousel/ImageCarousel";
 
 export const videoDescriptions = {
   "sugar-mama": (
@@ -19,6 +20,21 @@ export const videoDescriptions = {
           Campiglia - Wabi the Dog
         </CreditsName>
       </p>
+      
+      {/* Image Carousel */}
+      <div className="my-8">
+        <ImageCarousel
+          images={[
+            "/video-thumbnails/sugar-mama-thumb_01.jpg",
+            "/video-thumbnails/sugar-mama-thumb_02.jpg",
+            "/video-thumbnails/sugar-mama-thumb_03.jpg",
+            "/video-thumbnails/sugar-mama-thumb_04.jpg",
+            "/video-thumbnails/sugar-mama-thumb_05.jpg",
+          ]}
+          speed={30}
+        />
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         {/* <p>
           Cras malesuada, mi vitae molestie venenatis, urna augue tincidunt est, vitae semper lorem
