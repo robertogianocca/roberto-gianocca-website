@@ -60,6 +60,11 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
     playerInstanceRef.current = vimeoPlayer;
     vimeoPlayer.setVolume(volume);
+    
+    // Reset duration and currentTime to prevent flicker
+    setDuration(0);
+    setCurrentTime(0);
+    
     vimeoPlayer.getDuration().then((d) => setDuration(d));
 
     // Listen for the 'loaded' event to know when player is ready
@@ -101,6 +106,11 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
   useEffect(() => {
     if (playerInstanceRef.current && vimeoId) {
+      // Reset immediately to prevent flicker
+      setCurrentTime(0);
+      setDuration(0);
+      setIsPlayerReady(false); // Reset player ready state when switching videos
+      
       // Show controls when switching videos
       setShowControls(true);
       clearHideControlsTimer();
@@ -111,10 +121,12 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
         .then(() => {
           setCurrentTime(0);
           setPlaying(false);
+          setIsPlayerReady(true); // Set player as ready after video loads
           playerInstanceRef.current.getDuration().then((d) => setDuration(d));
         })
         .catch((error) => {
           console.error("Error loading video:", error);
+          setIsPlayerReady(true); // Set ready even on error to hide thumbnail
         });
     }
   }, [vimeoId]);
@@ -334,7 +346,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
         {thumbnail && (
           <div
             className={`absolute inset-0 z-5 transition-opacity duration-500 ${
-              isPlayerReady ? "opacity-0 pointer-events-none" : "opacity-100"
+              isPlayerReady ? "opacity-0 pointer-events-none" : "opacity-100 z-10"
             }`}
           >
             <Image
@@ -350,7 +362,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
         {/* Vimeo iframe */}
         <div
           ref={playerRef}
-          className={`vimeo-player w-full h-full transition-opacity duration-500 ${
+          className={`vimeo-player w-full h-full transition-opacity duration-500 relative z-0 ${
             fullscreen ? "absolute inset-0" : ""
           } ${isPlayerReady ? "opacity-100" : "opacity-0"}`}
         ></div>
@@ -414,7 +426,9 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
                 {/* Progress */}
                 <div
                   className="h-full bg-green-500 "
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                  style={{ 
+                    width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%'
+                  }}
                 />
 
                 {hoverTime !== null && (

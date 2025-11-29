@@ -20,7 +20,7 @@ export const videoDescriptions = {
           Campiglia - Wabi the Dog
         </CreditsName>
       </p>
-      
+
       {/* Image Carousel */}
       <div className="my-8">
         <ImageCarousel
