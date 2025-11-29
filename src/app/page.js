@@ -1,18 +1,8 @@
-import Wrapper from "@/components/Wrapper/Wrapper";
-import MenuBar from "@/components/MenuBar";
-import VideoGallery from "@/components/Video/VideoGallery";
+import { redirect } from "next/navigation";
+import { videoDataBase } from "@/data/video-data-base";
 
 export default function HomePage() {
-  return (
-    <div>
-      <div className="main-grid h-screen px-10">
-        <div className="col-span-1 pt-10">
-          <MenuBar />
-        </div>
-        <div className="col-span-4">
-          <VideoGallery />
-        </div>
-      </div>
-    </div>
-  );
+  // Redirect to the first video in the database
+  const firstVideoId = videoDataBase[0]?.id || "sugar-mama";
+  redirect(`/video/${firstVideoId}`);
 }

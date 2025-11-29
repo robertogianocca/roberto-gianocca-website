@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { videoDataBase } from "@/data/video-data-base";
 
-export default function VideoThumbnails({ selectedVideo, setSelectedVideo }) {
-  //
+export default function VideoThumbnails({ selectedVideo, onVideoChange }) {
   const videoThumbnails = videoDataBase.map((video, index) => {
     const isSelected = selectedVideo?.id === video.id;
 
@@ -15,7 +14,7 @@ export default function VideoThumbnails({ selectedVideo, setSelectedVideo }) {
             isSelected ? "filter-none scale-105" : "filter brightness-25 blur-xs scale-102"
           }
   `}
-          onMouseEnter={() => setSelectedVideo(video)}
+          onMouseEnter={() => onVideoChange(video)}
         >
           <Image src={video.thumbnail} alt={video.title} fill className="object-contain" />
         </div>

@@ -11,7 +11,7 @@ import PlayButton from "./VimeoPlayerIcons/PlayButton";
 import PauseButton from "./VimeoPlayerIcons/PauseButton";
 import FullScreen from "./VimeoPlayerIcons/FullScreen";
 
-export default function VimeoPlayer({ vimeoId, spriteSrc }) {
+export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
   const containerRef = useRef(null);
   const playerRef = useRef(null);
   const volumeSliderRef = useRef(null);
@@ -28,6 +28,9 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
+
+  // Loading state for smooth transition
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
 
   // Nuovi stati per il cursore personalizzato
   const [showCustomCursor, setShowCustomCursor] = useState(false);
@@ -55,6 +58,11 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
     playerInstanceRef.current = vimeoPlayer;
     vimeoPlayer.setVolume(volume);
     vimeoPlayer.getDuration().then((d) => setDuration(d));
+
+    // Listen for the 'loaded' event to know when player is ready
+    vimeoPlayer.on("loaded", () => {
+      setIsPlayerReady(true);
+    });
 
     vimeoPlayer.on("timeupdate", (data) => setCurrentTime(data.seconds));
     vimeoPlayer.on("play", () => {
@@ -88,6 +96,7 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
 
   useEffect(() => {
     if (playerInstanceRef.current && vimeoId) {
+      // Don't hide player during video switch (only on initial load)
       playerInstanceRef.current
         .loadVideo(vimeoId)
         .then(() => {
@@ -305,10 +314,29 @@ export default function VimeoPlayer({ vimeoId, spriteSrc }) {
           playing && !showControls ? "cursor-none" : ""
         }`}
       >
+        {/* Thumbnail placeholder - shows while player is loading */}
+        {thumbnail && (
+          <div
+            className={`absolute inset-0 z-5 transition-opacity duration-500 ${
+              isPlayerReady ? "opacity-0 pointer-events-none" : "opacity-100"
+            }`}
+          >
+            <Image
+              src={thumbnail}
+              alt="Video thumbnail"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
+
         {/* Vimeo iframe */}
         <div
           ref={playerRef}
-          className={` vimeo-player w-full h-full ${fullscreen ? "absolute inset-0" : ""}`}
+          className={`vimeo-player w-full h-full transition-opacity duration-500 ${
+            fullscreen ? "absolute inset-0" : ""
+          } ${isPlayerReady ? "opacity-100" : "opacity-0"}`}
         ></div>
 
         {/* Overlay click area */}
