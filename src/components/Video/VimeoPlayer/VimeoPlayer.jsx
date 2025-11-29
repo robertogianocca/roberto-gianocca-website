@@ -39,6 +39,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
   const [showCustomCursor, setShowCustomCursor] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isInExclusionZone, setIsInExclusionZone] = useState(false);
+  const cursorPositionInitialized = useRef(false);
 
   // Configurazione zona di esclusione (puoi modificare questo valore)
   const EXCLUSION_ZONE_HEIGHT = 90; // px dal fondo
@@ -76,13 +77,23 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
     vimeoPlayer.on("timeupdate", (data) => setCurrentTime(data.seconds));
     vimeoPlayer.on("play", () => {
+      console.log("Vimeo play event fired");
       setPlaying(true);
       startHideControlsTimer();
     });
     vimeoPlayer.on("pause", () => {
+      console.log("Vimeo pause event fired");
       setPlaying(false);
       setShowControls(true);
       clearHideControlsTimer();
+    });
+    vimeoPlayer.on("playing", () => {
+      console.log("Vimeo playing event fired");
+      setPlaying(true);
+    });
+    vimeoPlayer.on("paused", () => {
+      console.log("Vimeo paused event fired");
+      setPlaying(false);
     });
 
     const handleFullscreenChange = () => {
@@ -110,6 +121,11 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
       setCurrentTime(0);
       setDuration(0);
       setIsPlayerReady(false); // Reset player ready state when switching videos
+      setPlaying(false); // Reset playing state immediately
+      
+      // Reset cursor position when switching videos to prevent showing at old position
+      setCursorPosition({ x: 0, y: 0 });
+      cursorPositionInitialized.current = false;
       
       // Show controls when switching videos
       setShowControls(true);
@@ -123,10 +139,17 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
           setPlaying(false);
           setIsPlayerReady(true); // Set player as ready after video loads
           playerInstanceRef.current.getDuration().then((d) => setDuration(d));
+          // Double-check that player is paused after loading
+          return playerInstanceRef.current.getPaused();
+        })
+        .then((paused) => {
+          // Sync state with actual player state
+          setPlaying(!paused);
         })
         .catch((error) => {
           console.error("Error loading video:", error);
           setIsPlayerReady(true); // Set ready even on error to hide thumbnail
+          setPlaying(false); // Ensure playing state is false on error
         });
     }
   }, [vimeoId]);
@@ -144,17 +167,28 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
     if (hideControlsTimeout.current) clearTimeout(hideControlsTimeout.current);
   };
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (!playerInstanceRef.current) return;
     
     // Trigger click animation
     setShowClickAnimation(true);
     setTimeout(() => setShowClickAnimation(false), 400);
     
-    if (playing) playerInstanceRef.current.pause();
-    else {
-      playerInstanceRef.current.play();
-      startHideControlsTimer();
+    try {
+      const isPaused = await playerInstanceRef.current.getPaused();
+      
+      if (isPaused) {
+        await playerInstanceRef.current.play();
+        setPlaying(true);
+        startHideControlsTimer();
+      } else {
+        await playerInstanceRef.current.pause();
+        setPlaying(false);
+        setShowControls(true);
+        clearHideControlsTimer();
+      }
+    } catch (error) {
+      console.error("Error toggling playback:", error);
     }
   };
 
@@ -196,11 +230,14 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
       // Mostra il cursore custom solo se NON è nella zona di esclusione
       if (!inExclusionZone) {
-        setShowCustomCursor(true);
-        setCursorPosition({
+        // Always update cursor position from actual mouse event
+        const newPosition = {
           x: e.clientX,
           y: e.clientY,
-        });
+        };
+        setCursorPosition(newPosition);
+        setShowCustomCursor(true);
+        cursorPositionInitialized.current = true;
       } else {
         setShowCustomCursor(false);
       }
@@ -309,7 +346,8 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
       } unused:bg-gray-700 ${showCustomCursor && !isInExclusionZone ? "cursor-none" : ""}`}
     >
       {/* CURSORE PERSONALIZZATO */}
-      {showCustomCursor && !isInExclusionZone && (
+      {/* Only show cursor when player is ready (video loaded, thumbnail hidden) */}
+      {showCustomCursor && !isInExclusionZone && isPlayerReady && cursorPositionInitialized.current && cursorPosition.x > 0 && cursorPosition.y > 0 && (
         <motion.div
           className="fixed z-50 pointer-events-none mix-blend-exclusion"
           style={{
@@ -317,12 +355,13 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
             top: cursorPosition.y,
             transform: "translate(-50%, -50%)",
           }}
+          initial={{ opacity: 0 }}
           animate={{
             scale: showClickAnimation ? [1, 1.3, 1] : 1,
-            opacity: showClickAnimation ? [1, 0.8, 1] : 1,
+            opacity: showClickAnimation ? [1, 0.8, 1] : isPlayerReady ? 1 : 0,
           }}
           transition={{
-            duration: 0.3,
+            duration: showClickAnimation ? 0.3 : 0.5,
             ease: "easeOut",
           }}
         >
@@ -345,17 +384,19 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
         {/* Thumbnail placeholder - shows while player is loading */}
         {thumbnail && (
           <div
-            className={`absolute inset-0 z-5 transition-opacity duration-500 ${
+            className={`absolute inset-0 z-5 transition-opacity duration-500 overflow-hidden ${
               isPlayerReady ? "opacity-0 pointer-events-none" : "opacity-100 z-10"
             }`}
           >
-            <Image
-              src={thumbnail}
-              alt="Video thumbnail"
-              fill
-              className="object-cover"
-              priority
-            />
+            <div className="absolute inset-0 blur-sm">
+              <Image
+                src={thumbnail}
+                alt="Video thumbnail"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
           </div>
         )}
 
@@ -375,12 +416,18 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
         {/* ========== OVERLAY CONTROLS ========== */}
         {
-          <div
-            className={`absolute bottom-0 left-0 w-full z-30 text-white transition-opacity duration-600 ${
-              showControls ? "opacity-100" : "opacity-0"
-            } ${
+          <motion.div
+            className={`absolute bottom-0 left-0 w-full z-30 text-white ${
               showControls & fullscreen && "bg-black pt-2"
             }  bg-gradient-to-t from-black/100 via-black/40 via-80% to-transparent`}
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: showControls && isPlayerReady ? 1 : 0 
+            }}
+            transition={{
+              duration: 0.5,
+              ease: "easeOut",
+            }}
           >
             {/* Top Row */}
             <div className="flex justify-between items-center px-4 pt-3 pb-1">
@@ -480,7 +527,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
                 )}
               </div>
             </div>
-          </div>
+          </motion.div>
         }
       </div>
     </div>
