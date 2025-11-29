@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import Image from "next/image";
 import { motion, useMotionValue, useAnimationFrame } from "motion/react";
+import Image from "next/image";
 
 export default function ImageCarousel({ images, speed = 30 }) {
-  const containerRef = useRef(null);
   const x = useMotionValue(0);
   const imageWidth = 200; // Width of each image in pixels
   const gap = 16; // Gap between images (gap-4 = 16px)
@@ -32,7 +30,6 @@ export default function ImageCarousel({ images, speed = 30 }) {
   return (
     <div className="relative w-full overflow-hidden">
       <motion.div
-        ref={containerRef}
         className="flex gap-4"
         style={{
           x,

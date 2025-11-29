@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 import { videoDataBase } from "@/data/video-data-base";
@@ -13,24 +13,12 @@ export default function VideoGallery({ initialVideoId }) {
 
   // Use local state for smooth transitions (no re-render from URL changes)
   const [selectedVideo, setSelectedVideo] = useState(initialVideo);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleVideoChange = (video) => {
-    setIsAnimating(true);
     setSelectedVideo(video);
     // Update URL without triggering React re-render
     window.history.replaceState(null, "", `/video/${video.id}`);
-    
-    // Reset animation state after a brief delay
-    setTimeout(() => setIsAnimating(false), 100);
   };
-
-  // Trigger animation on initial load
-  useEffect(() => {
-    setIsAnimating(true);
-    const timer = setTimeout(() => setIsAnimating(false), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div className="content-grid ">

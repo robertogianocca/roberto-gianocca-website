@@ -12,11 +12,9 @@ import PlayButton from "./VimeoPlayerIcons/PlayButton";
 import PauseButton from "./VimeoPlayerIcons/PauseButton";
 import FullScreen from "./VimeoPlayerIcons/FullScreen";
 
-export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
+export default function VimeoPlayer({ vimeoId, thumbnail }) {
   const containerRef = useRef(null);
   const playerRef = useRef(null);
-  const volumeSliderRef = useRef(null);
-  const volumeContainerRef = useRef(null);
 
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -46,8 +44,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
   const playerInstanceRef = useRef(null);
   const hideControlsTimeout = useRef(null);
-  const progressBarRef = useRef(null);
-  const mouseMoveTimeout = useRef(null);
 
   useEffect(() => {
     if (!playerRef.current) return;
@@ -77,22 +73,18 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
     vimeoPlayer.on("timeupdate", (data) => setCurrentTime(data.seconds));
     vimeoPlayer.on("play", () => {
-      console.log("Vimeo play event fired");
       setPlaying(true);
       startHideControlsTimer();
     });
     vimeoPlayer.on("pause", () => {
-      console.log("Vimeo pause event fired");
       setPlaying(false);
       setShowControls(true);
       clearHideControlsTimer();
     });
     vimeoPlayer.on("playing", () => {
-      console.log("Vimeo playing event fired");
       setPlaying(true);
     });
     vimeoPlayer.on("paused", () => {
-      console.log("Vimeo paused event fired");
       setPlaying(false);
     });
 
@@ -307,13 +299,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
     }
   };
 
-  // Volume slider is now always visible, so we don't need these handlers
-  const handleVolumeContainerMouseEnter = () => {};
-  const handleVolumeContainerMouseLeave = () => {};
-  const handleVolumeSliderMouseLeave = () => {};
-
-  // --------
-
   const handleTouchStart = (e) => {
     setIsDraggingProgress(true);
     setShowControls(true);
@@ -436,11 +421,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
                 volume={volume}
                 onToggleMute={toggleMute}
                 onVolumeChange={changeVolume}
-                onEnterContainer={handleVolumeContainerMouseEnter}
-                onLeaveContainer={handleVolumeContainerMouseLeave}
-                onLeaveSlider={handleVolumeSliderMouseLeave}
-                volumeContainerRef={volumeContainerRef}
-                volumeSliderRef={volumeSliderRef}
                 fullscreen={fullscreen}
               />
 
@@ -461,7 +441,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
             {/* Progress Bar */}
             <div className={`${fullscreen && "pb-8 px-4 py-2 m-auto w-3/5"} `}>
               <div
-                ref={progressBarRef}
                 className="h-1 bg-green-900 cursor-pointer relative group"
                 onClick={handleProgressChange}
                 onMouseMove={handleProgressHover}
@@ -507,24 +486,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
                   </div>
                 )}
 
-                {/* Hover thumbnail */}
-                {hoverTime !== null && spriteSrc && (
-                  <div
-                    className="absolute -top-32 w-40 h-22 overflow-hidden border-2 border-white rounded-lg shadow-lg"
-                    style={{
-                      left: `${hoverX}%`,
-                      transform: "translateX(-50%)",
-                    }}
-                  >
-                    <Image
-                      src={spriteSrc}
-                      alt="Thumbnail"
-                      width={320}
-                      height={180}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </motion.div>

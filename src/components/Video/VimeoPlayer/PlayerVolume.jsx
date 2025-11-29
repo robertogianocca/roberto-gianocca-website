@@ -6,17 +6,7 @@ import VolumeOff from "./VimeoPlayerIcons/VolumeOff";
 import VolumeLow from "./VimeoPlayerIcons/VolumeLow";
 import VolumeHigh from "./VimeoPlayerIcons/VolumeHigh";
 
-export default function PlayerVolume({
-  volume,
-  onToggleMute,
-  onVolumeChange,
-  onEnterContainer,
-  onLeaveContainer,
-  onLeaveSlider,
-  volumeContainerRef,
-  volumeSliderRef,
-  fullscreen,
-}) {
+export default function PlayerVolume({ volume, onToggleMute, onVolumeChange, fullscreen }) {
   const sliderContainerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -86,12 +76,7 @@ export default function PlayerVolume({
   }, [isDragging]);
 
   return (
-    <div
-      ref={volumeContainerRef}
-      onMouseEnter={onEnterContainer}
-      onMouseLeave={onLeaveContainer}
-      className={`flex items-center cursor-pointer ${fullscreen ? "pl-130" : ""}`}
-    >
+    <div className={`flex items-center cursor-pointer ${fullscreen ? "pl-130" : ""}`}>
       {/* Volume Icon */}
       <button 
         onClick={onToggleMute}
@@ -112,16 +97,8 @@ export default function PlayerVolume({
       <div
         ref={(node) => {
           sliderContainerRef.current = node;
-          if (volumeSliderRef) {
-            if (typeof volumeSliderRef === "function") {
-              volumeSliderRef(node);
-            } else if (volumeSliderRef.current !== undefined) {
-              volumeSliderRef.current = node;
-            }
-          }
         }}
         className="flex items-center translate-y-[-3px] pl-2 w-30 opacity-100 cursor-pointer py-2 -my-2 relative select-none"
-        onMouseLeave={onLeaveSlider}
         onMouseDown={handleSliderMouseDown}
         onMouseMove={handleSliderMouseMove}
         onMouseUp={handleSliderMouseUp}
