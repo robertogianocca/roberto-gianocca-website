@@ -26,7 +26,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
   const [fullscreen, setFullscreen] = useState(false);
   const [hoverTime, setHoverTime] = useState(null);
   const [hoverX, setHoverX] = useState(0);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [showControls, setShowControls] = useState(true);
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
 
@@ -259,16 +258,10 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
     }
   };
 
-  const handleVolumeContainerMouseEnter = () => setShowVolumeSlider(true);
-  const handleVolumeContainerMouseLeave = (e) => {
-    if (volumeSliderRef.current?.contains(e.relatedTarget)) return;
-    setShowVolumeSlider(false);
-  };
-
-  const handleVolumeSliderMouseLeave = (e) => {
-    if (volumeContainerRef.current?.contains(e.relatedTarget)) return;
-    setShowVolumeSlider(false);
-  };
+  // Volume slider is now always visible, so we don't need these handlers
+  const handleVolumeContainerMouseEnter = () => {};
+  const handleVolumeContainerMouseLeave = () => {};
+  const handleVolumeSliderMouseLeave = () => {};
 
   // --------
 
@@ -382,7 +375,6 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
               {/* Volume */}
               <PlayerVolume
                 volume={volume}
-                showVolumeSlider={showVolumeSlider}
                 onToggleMute={toggleMute}
                 onVolumeChange={changeVolume}
                 onEnterContainer={handleVolumeContainerMouseEnter}
