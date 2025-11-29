@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 
 import Player from "@vimeo/player";
 
@@ -31,6 +32,9 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
   // Loading state for smooth transition
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  
+  // Animation state for click feedback
+  const [showClickAnimation, setShowClickAnimation] = useState(false);
 
   // Nuovi stati per il cursore personalizzato
   const [showCustomCursor, setShowCustomCursor] = useState(false);
@@ -62,6 +66,8 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
     // Listen for the 'loaded' event to know when player is ready
     vimeoPlayer.on("loaded", () => {
       setIsPlayerReady(true);
+      setShowControls(true);
+      clearHideControlsTimer();
     });
 
     vimeoPlayer.on("timeupdate", (data) => setCurrentTime(data.seconds));
@@ -96,6 +102,10 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
   useEffect(() => {
     if (playerInstanceRef.current && vimeoId) {
+      // Show controls when switching videos
+      setShowControls(true);
+      clearHideControlsTimer();
+      
       // Don't hide player during video switch (only on initial load)
       playerInstanceRef.current
         .loadVideo(vimeoId)
@@ -125,6 +135,11 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
 
   const togglePlay = () => {
     if (!playerInstanceRef.current) return;
+    
+    // Trigger click animation
+    setShowClickAnimation(true);
+    setTimeout(() => setShowClickAnimation(false), 400);
+    
     if (playing) playerInstanceRef.current.pause();
     else {
       playerInstanceRef.current.play();
@@ -290,22 +305,30 @@ export default function VimeoPlayer({ vimeoId, thumbnail, spriteSrc }) {
     >
       {/* CURSORE PERSONALIZZATO */}
       {showCustomCursor && !isInExclusionZone && (
-        <div
-          className="fixed z-50 pointer-events-none mix-blend-exclusion transition-transform duration-100"
+        <motion.div
+          className="fixed z-50 pointer-events-none mix-blend-exclusion"
           style={{
             left: cursorPosition.x,
             top: cursorPosition.y,
             transform: "translate(-50%, -50%)",
           }}
+          animate={{
+            scale: showClickAnimation ? [1, 1.3, 1] : 1,
+            opacity: showClickAnimation ? [1, 0.8, 1] : 1,
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeOut",
+          }}
         >
-          <div className="rounded-full  backdrop-blur-sm">
+          <div className="rounded-full backdrop-blur-sm">
             {playing ? (
               <PauseButton className="w-6 h-6 text-white" />
             ) : (
               <PlayButton className="w-6 h-6 text-white" />
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* VIDEO WRAPPER */}
