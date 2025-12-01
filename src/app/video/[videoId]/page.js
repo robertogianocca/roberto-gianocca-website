@@ -1,5 +1,5 @@
 import MenuBar from "@/components/MenuBar";
-import VideoGallery from "@/components/Video/VideoGallery";
+import VideoSection from "@/components/Video/VideoSection";
 import { videoDataBase } from "@/data/video-data-base";
 import { notFound } from "next/navigation";
 
@@ -43,7 +43,7 @@ export default async function VideoPage({ params }) {
           <MenuBar />
         </div>
         <div className="col-span-4">
-          <VideoGallery initialVideoId={videoId} />
+          <VideoSection initialVideoId={videoId} />
         </div>
       </div>
     </div>
