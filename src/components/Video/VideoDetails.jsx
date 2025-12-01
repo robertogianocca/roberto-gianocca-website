@@ -3,9 +3,9 @@
 import { motion } from "motion/react";
 import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 
-export default function VideoDetails({ selectedVideo }) {
+export default function VideoDetails({ selectedVideo, isStandalone = false }) {
   return (
-    <div className="w-full h-[calc(100vh)] overflow-auto scrollbar-hide pt-10 col-span-3">
+    <div className={`w-full h-[calc(100vh)] overflow-auto scrollbar-hide ${isStandalone ? "pt-10" : "pt-10 col-span-3"}`}>
       {/* Video Player with animation */}
       <motion.div
         key={selectedVideo.id}

@@ -1,14 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { videoDataBase } from "@/data/video-data-base";
 
-export default function VideoThumbnails({ selectedVideo, onVideoChange }) {
+export default function VideoThumbnails({ selectedVideo, onVideoChange, enableNavigation = false }) {
   const videoThumbnails = videoDataBase.map((video, index) => {
     const isSelected = selectedVideo?.id === video.id;
 
-    return (
+    const thumbnailContent = (
       <motion.div
         key={video.id}
         className="overflow-hidden mb-4 rounded-2xl"
@@ -21,16 +22,27 @@ export default function VideoThumbnails({ selectedVideo, onVideoChange }) {
         }}
       >
         <div
-          className={`relative aspect-video transition-all duration-500  ${index !== 0 ? "" : ""} ${
+          className={`relative aspect-video transition-all duration-500 ${
             isSelected ? "filter-none scale-105" : "filter brightness-25 blur-xs scale-102"
-          }
-  `}
-          onMouseEnter={() => onVideoChange(video)}
+          }`}
+          onMouseEnter={() => !enableNavigation && onVideoChange && onVideoChange(video)}
         >
           <Image src={video.thumbnail} alt={video.title} fill className="object-contain" />
         </div>
       </motion.div>
     );
+
+    // On mobile (enableNavigation=true), wrap in Link for navigation
+    if (enableNavigation) {
+      return (
+        <Link key={video.id} href={`/video/${video.id}`}>
+          {thumbnailContent}
+        </Link>
+      );
+    }
+
+    // On desktop, just return the thumbnail with hover
+    return thumbnailContent;
   });
 
   return <div className="">{videoThumbnails}</div>;

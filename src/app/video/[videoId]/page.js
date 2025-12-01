@@ -1,5 +1,6 @@
 import MenuBar from "@/components/MenuBar";
 import VideoSection from "@/components/Video/VideoSection";
+import VideoDetails from "@/components/Video/VideoDetails";
 import { videoDataBase } from "@/data/video-data-base";
 import { notFound } from "next/navigation";
 
@@ -42,8 +43,15 @@ export default async function VideoPage({ params }) {
         <div className="col-span-1 pt-10">
           <MenuBar />
         </div>
-        <div className="col-span-4">
+        
+        {/* Desktop: Show full VideoSection with thumbnails and details */}
+        <div className="hidden md:block col-span-4">
           <VideoSection initialVideoId={videoId} />
+        </div>
+        
+        {/* Mobile: Show only video details (player + descriptions) */}
+        <div className="block md:hidden col-span-4">
+          <VideoDetails selectedVideo={video} isStandalone={true} />
         </div>
       </div>
     </div>

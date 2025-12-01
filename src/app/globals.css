@@ -45,10 +45,10 @@
 
 @layer components {
   .main-grid {
-    @apply grid grid-cols-5 gap-20;
+    @apply grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-20;
   }
   .content-grid {
-    @apply grid grid-cols-4 gap-20;
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-20;
   }
 
   /* globals.css o app/globals.css */
