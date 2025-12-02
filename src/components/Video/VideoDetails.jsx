@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 import VideoSecondaryThumbnails from "./VideoSecondaryThumbnails";
+import VideoInteractiveCarousel from "./VideoInteractiveCarousel";
 
 export default function VideoDetails({ selectedVideo, isStandalone = false }) {
   return (
@@ -54,6 +55,7 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
       </motion.div>
 
       <VideoSecondaryThumbnails selectedVideoId={selectedVideo.id} />
+      <VideoInteractiveCarousel />
     </div>
   );
 }
