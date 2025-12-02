@@ -15,6 +15,7 @@ export default function VideoThumbnails({ selectedVideo, onVideoChange, enableNa
         className="overflow-hidden mb-4 rounded-2xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        whileTap={enableNavigation ? { scale: 0.95 } : undefined}
         transition={{
           duration: 0.5,
           delay: index * 0.1, // Stagger delay: 0.1s between each thumbnail

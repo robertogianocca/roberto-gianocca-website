@@ -5,7 +5,25 @@ import { videoDataBase } from "@/data/video-data-base";
 import VideoThumbnails from "./VideoThumbnails";
 import VideoDetails from "./VideoDetails";
 
+const DESKTOP_BREAKPOINT = 768;
+
 export default function VideoSection({ initialVideoId }) {
+  // Desktop-only rendering
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+    
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
+    };
+
+    checkIsDesktop();
+    window.addEventListener("resize", checkIsDesktop);
+    return () => window.removeEventListener("resize", checkIsDesktop);
+  }, []);
+
   // Find the initial video based on the URL parameter
   const initialVideo =
     videoDataBase.find((video) => video.id === initialVideoId) || videoDataBase[0];
@@ -43,6 +61,11 @@ export default function VideoSection({ initialVideoId }) {
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, [selectVideoById]);
+
+  // Don't render on mobile - prevents Vimeo player errors during navigation
+  if (!hasMounted || !isDesktop) {
+    return null;
+  }
 
   return (
     <div className="content-grid ">

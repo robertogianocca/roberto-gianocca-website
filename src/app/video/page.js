@@ -19,14 +19,12 @@ export default function VideoIndexPage() {
         <MenuBar />
       </div>
 
-      {/* Desktop: Show full VideoSection with thumbnails and details */}
-      <div className="hidden md:block col-span-4">
+      <div className="col-span-4">
+        {/* Desktop: Show full VideoSection with thumbnails and details */}
         <VideoSection initialVideoId={firstVideo.id} />
-      </div>
 
-      {/* Mobile: Show only thumbnails with navigation */}
-      <div className="block md:hidden col-span-4">
-        <div className="w-full h-[calc(100vh)] overflow-auto scrollbar-hide pt-10">
+        {/* Mobile: Show only thumbnails with navigation */}
+        <div className="block md:hidden w-full h-[calc(100vh)] overflow-auto scrollbar-hide pt-10">
           <VideoThumbnails enableNavigation={true} />
         </div>
       </div>

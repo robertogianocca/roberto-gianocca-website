@@ -44,14 +44,14 @@ export default async function VideoPage({ params }) {
           <MenuBar />
         </div>
         
-        {/* Desktop: Show full VideoSection with thumbnails and details */}
-        <div className="hidden md:block col-span-4">
+        <div className="col-span-4">
+          {/* Desktop: Show full VideoSection with thumbnails and details */}
           <VideoSection initialVideoId={videoId} />
-        </div>
-        
-        {/* Mobile: Show only video details (player + descriptions) */}
-        <div className="block md:hidden col-span-4">
-          <VideoDetails selectedVideo={video} isStandalone={true} />
+          
+          {/* Mobile: Show only video details (player + descriptions) */}
+          <div className="block md:hidden">
+            <VideoDetails selectedVideo={video} isStandalone={true} />
+          </div>
         </div>
       </div>
     </div>

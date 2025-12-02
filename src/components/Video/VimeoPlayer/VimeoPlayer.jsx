@@ -40,8 +40,11 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
 
   const playerInstanceRef = useRef(null);
   const hideControlsTimeout = useRef(null);
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
+    isMountedRef.current = true;
+    
     if (!playerRef.current) return;
 
     const vimeoPlayer = new Player(playerRef.current, {
@@ -58,33 +61,44 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
     setDuration(0);
     setCurrentTime(0);
     
-    vimeoPlayer.getDuration().then((d) => setDuration(d));
+    vimeoPlayer.getDuration().then((d) => {
+      if (isMountedRef.current) setDuration(d);
+    }).catch(() => {});
 
     // Listen for the 'loaded' event to know when player is ready
     vimeoPlayer.on("loaded", () => {
-      setIsPlayerReady(true);
-      setShowControls(true);
-      clearHideControlsTimer();
+      if (isMountedRef.current) {
+        setIsPlayerReady(true);
+        setShowControls(true);
+        clearHideControlsTimer();
+      }
     });
 
-    vimeoPlayer.on("timeupdate", (data) => setCurrentTime(data.seconds));
+    vimeoPlayer.on("timeupdate", (data) => {
+      if (isMountedRef.current) setCurrentTime(data.seconds);
+    });
     vimeoPlayer.on("play", () => {
-      setPlaying(true);
-      startHideControlsTimer();
+      if (isMountedRef.current) {
+        setPlaying(true);
+        startHideControlsTimer();
+      }
     });
     vimeoPlayer.on("pause", () => {
-      setPlaying(false);
-      setShowControls(true);
-      clearHideControlsTimer();
+      if (isMountedRef.current) {
+        setPlaying(false);
+        setShowControls(true);
+        clearHideControlsTimer();
+      }
     });
     vimeoPlayer.on("playing", () => {
-      setPlaying(true);
+      if (isMountedRef.current) setPlaying(true);
     });
     vimeoPlayer.on("paused", () => {
-      setPlaying(false);
+      if (isMountedRef.current) setPlaying(false);
     });
 
     const handleFullscreenChange = () => {
+      if (!isMountedRef.current) return;
       const isFullscreen = !!document.fullscreenElement;
       setFullscreen(isFullscreen);
 
@@ -98,48 +112,58 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
     document.addEventListener("fullscreenchange", handleFullscreenChange);
 
     return () => {
-      vimeoPlayer.destroy();
+      isMountedRef.current = false;
+      playerInstanceRef.current = null;
+      vimeoPlayer.destroy().catch(() => {});
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
 
   useEffect(() => {
-    if (playerInstanceRef.current && vimeoId) {
-      // Reset immediately to prevent flicker
-      setCurrentTime(0);
-      setDuration(0);
-      setIsPlayerReady(false); // Reset player ready state when switching videos
-      setPlaying(false); // Reset playing state immediately
-      
-      // Reset cursor position when switching videos to prevent showing at old position
-      setCursorPosition({ x: 0, y: 0 });
-      cursorPositionInitialized.current = false;
-      
-      // Show controls when switching videos
-      setShowControls(true);
-      clearHideControlsTimer();
-      
-      // Don't hide player during video switch (only on initial load)
-      playerInstanceRef.current
-        .loadVideo(vimeoId)
-        .then(() => {
-          setCurrentTime(0);
-          setPlaying(false);
-          setIsPlayerReady(true); // Set player as ready after video loads
-          playerInstanceRef.current.getDuration().then((d) => setDuration(d));
-          // Double-check that player is paused after loading
-          return playerInstanceRef.current.getPaused();
-        })
-        .then((paused) => {
-          // Sync state with actual player state
-          setPlaying(!paused);
-        })
-        .catch((error) => {
-          console.error("Error loading video:", error);
-          setIsPlayerReady(true); // Set ready even on error to hide thumbnail
-          setPlaying(false); // Ensure playing state is false on error
-        });
-    }
+    const player = playerInstanceRef.current;
+    if (!player || !vimeoId || !isMountedRef.current) return;
+    
+    // Reset immediately to prevent flicker
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlayerReady(false); // Reset player ready state when switching videos
+    setPlaying(false); // Reset playing state immediately
+    
+    // Reset cursor position when switching videos to prevent showing at old position
+    setCursorPosition({ x: 0, y: 0 });
+    cursorPositionInitialized.current = false;
+    
+    // Show controls when switching videos
+    setShowControls(true);
+    clearHideControlsTimer();
+    
+    // Don't hide player during video switch (only on initial load)
+    player
+      .loadVideo(vimeoId)
+      .then(() => {
+        if (!isMountedRef.current || !playerInstanceRef.current) return;
+        setCurrentTime(0);
+        setPlaying(false);
+        setIsPlayerReady(true); // Set player as ready after video loads
+        return playerInstanceRef.current.getDuration();
+      })
+      .then((d) => {
+        if (!isMountedRef.current || !playerInstanceRef.current) return;
+        if (d !== undefined) setDuration(d);
+        // Double-check that player is paused after loading
+        return playerInstanceRef.current.getPaused();
+      })
+      .then((paused) => {
+        if (!isMountedRef.current) return;
+        // Sync state with actual player state
+        if (paused !== undefined) setPlaying(!paused);
+      })
+      .catch(() => {
+        // Silently ignore errors from unmounted/destroyed player
+        if (!isMountedRef.current) return;
+        setIsPlayerReady(true); // Set ready even on error to hide thumbnail
+        setPlaying(false); // Ensure playing state is false on error
+      });
   }, [vimeoId]);
 
   // qui viene gestito il tempo di sparizione di tutti i controlli.
@@ -156,27 +180,31 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
   };
 
   const togglePlay = async () => {
-    if (!playerInstanceRef.current) return;
+    const player = playerInstanceRef.current;
+    if (!player || !isMountedRef.current) return;
     
     // Trigger click animation
     setShowClickAnimation(true);
     setTimeout(() => setShowClickAnimation(false), 400);
     
     try {
-      const isPaused = await playerInstanceRef.current.getPaused();
+      const isPaused = await player.getPaused();
+      if (!isMountedRef.current || !playerInstanceRef.current) return;
       
       if (isPaused) {
-        await playerInstanceRef.current.play();
+        await player.play();
+        if (!isMountedRef.current) return;
         setPlaying(true);
         startHideControlsTimer();
       } else {
-        await playerInstanceRef.current.pause();
+        await player.pause();
+        if (!isMountedRef.current) return;
         setPlaying(false);
         setShowControls(true);
         clearHideControlsTimer();
       }
-    } catch (error) {
-      console.error("Error toggling playback:", error);
+    } catch {
+      // Silently ignore errors from unmounted/destroyed player
     }
   };
 
