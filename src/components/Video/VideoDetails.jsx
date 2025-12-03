@@ -18,7 +18,7 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
           delay: 0.2,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className="lg:hidden flex flex-col justify-center h-17 text-credits"
+        className="lg:hidden flex flex-col justify-center h-17 text-credits font-jet-brains tracking-tight"
       >
         <h2 className="text-xs">{selectedVideo.title}</h2>
         <h3 className="text-xs">{selectedVideo.subtitle}</h3>
@@ -67,8 +67,8 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
         {selectedVideo.description}
       </motion.div>
 
-      <VideoSecondaryThumbnails selectedVideoId={selectedVideo.id} />
-      <VideoInteractiveCarousel />
+      {/* <VideoSecondaryThumbnails selectedVideoId={selectedVideo.id} /> */}
+      {/* <VideoInteractiveCarousel /> */}
     </div>
   );
 }

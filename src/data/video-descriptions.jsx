@@ -12,6 +12,7 @@ export const videoDescriptions = {
         Assistant Director:
         <CreditsName>Shondel Bervini</CreditsName>
       </p>
+
       <p>
         Styling & Costumes:
         <CreditsName>Shondel Bervini, Sofia Buob</CreditsName>
@@ -33,7 +34,7 @@ export const videoDescriptions = {
       </p>
 
       {/* Image Carousel */}
-      <div className="my-8">
+      {/* <div className="my-8">
         <ImageCarousel
           images={[
             "/video-thumbnails/sugar-mama-thumb_01.jpg",
@@ -44,7 +45,7 @@ export const videoDescriptions = {
           ]}
           speed={30}
         />
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-2 gap-4">
         {/* <p>
@@ -59,7 +60,7 @@ export const videoDescriptions = {
           ullamcorper. Mauris auctor pretium diam, a consequat purus varius id. Aliquam eu dignissim
           urna, in pellentesque risus. Integer consectetur eu nisl in scelerisque.
         </p> */}
-        <div className="col-span-2 rounded-sm bg-red-300 shadow-xl/30 overflow-hidden">
+        {/* <div className="col-span-2 rounded-sm bg-red-300 shadow-xl/30 overflow-hidden">
           <Image
             src="/video/sugar-mama/sugar-mama-backstage-01.webp"
             alt=""
@@ -67,7 +68,7 @@ export const videoDescriptions = {
             height={3000}
             className="rounded-b-sm"
           />
-        </div>
+        </div> */}
       </div>
       <div className="py-6"></div>
     </div>
