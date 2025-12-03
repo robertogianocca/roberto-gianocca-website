@@ -2,6 +2,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/Background/Background";
 import MobileMenu from "@/components/MobileMenu";
+import PageTransition from "@/components/PageTransition";
 
 // Configure the font
 const inter = Inter({
@@ -29,7 +30,7 @@ export default function RootLayout({ children }) {
       >
         <Background color="#456DFF" />
         <MobileMenu />
-        {children}
+        <PageTransition>{children}</PageTransition>
       </body>
     </html>
   );

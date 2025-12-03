@@ -78,7 +78,7 @@ export default function MobileMenu() {
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full max-w-sm rounded-3xl border border-white/10 bg-black/80 p-6 shadow-2xl"
               >
-                <MenuBar />
+                <MenuBar onNavigate={closeMenu} />
               </motion.div>
             </motion.div>
           </>
