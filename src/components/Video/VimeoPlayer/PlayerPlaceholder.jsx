@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 
-export default function PlayerPlaceholder({ thumbnail, isPlayerReady }) {
-  if (!thumbnail) return null;
+export default function PlayerPlaceholder({ cover, isPlayerReady }) {
+  if (!cover) return null;
 
   return (
     <div
@@ -12,15 +12,8 @@ export default function PlayerPlaceholder({ thumbnail, isPlayerReady }) {
       }`}
     >
       <div className="absolute inset-0 blur-sm">
-        <Image
-          src={thumbnail}
-          alt="Video thumbnail"
-          fill
-          className="object-cover"
-          priority
-        />
+        <Image src={cover} alt="Video thumbnail" fill className="object-cover" priority />
       </div>
     </div>
   );
 }
-

@@ -7,7 +7,11 @@ import VideoInteractiveCarousel from "./VideoInteractiveCarousel";
 
 export default function VideoDetails({ selectedVideo, isStandalone = false }) {
   return (
-    <div className={`w-full h-[calc(100vh)] overflow-auto scrollbar-hide ${isStandalone ? "pt-10" : "pt-10 col-span-3"}`}>
+    <div
+      className={`w-full h-[calc(100vh)] overflow-auto scrollbar-hide ${
+        isStandalone ? "pt-10" : "pt-10 col-span-3"
+      }`}
+    >
       {/* Video Player with animation */}
       <motion.div
         key={selectedVideo.id}
@@ -18,10 +22,7 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
           ease: [0.16, 1, 0.3, 1], // Custom easing for smooth feel
         }}
       >
-        <VimeoPlayer
-          vimeoId={selectedVideo.vimeoId}
-          thumbnail={selectedVideo.thumbnail}
-        />
+        <VimeoPlayer vimeoId={selectedVideo.vimeoId} cover={selectedVideo.cover} />
       </motion.div>
 
       {/* Title and Subtitle with animation */}
@@ -59,4 +60,3 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
     </div>
   );
 }
-

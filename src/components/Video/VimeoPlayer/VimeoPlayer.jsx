@@ -8,7 +8,7 @@ import PlayerControls from "./PlayerControls";
 import PlayerCursor from "./PlayerCursor";
 import PlayerPlaceholder from "./PlayerPlaceholder";
 
-export default function VimeoPlayer({ vimeoId, thumbnail }) {
+export default function VimeoPlayer({ vimeoId, cover }) {
   const containerRef = useRef(null);
   const playerRef = useRef(null);
 
@@ -25,7 +25,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
 
   // Loading state for smooth transition
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-  
+
   // Animation state for click feedback
   const [showClickAnimation, setShowClickAnimation] = useState(false);
 
@@ -44,7 +44,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
 
   useEffect(() => {
     isMountedRef.current = true;
-    
+
     if (!playerRef.current) return;
 
     const vimeoPlayer = new Player(playerRef.current, {
@@ -56,14 +56,17 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
 
     playerInstanceRef.current = vimeoPlayer;
     vimeoPlayer.setVolume(volume);
-    
+
     // Reset duration and currentTime to prevent flicker
     setDuration(0);
     setCurrentTime(0);
-    
-    vimeoPlayer.getDuration().then((d) => {
-      if (isMountedRef.current) setDuration(d);
-    }).catch(() => {});
+
+    vimeoPlayer
+      .getDuration()
+      .then((d) => {
+        if (isMountedRef.current) setDuration(d);
+      })
+      .catch(() => {});
 
     // Listen for the 'loaded' event to know when player is ready
     vimeoPlayer.on("loaded", () => {
@@ -122,21 +125,21 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
   useEffect(() => {
     const player = playerInstanceRef.current;
     if (!player || !vimeoId || !isMountedRef.current) return;
-    
+
     // Reset immediately to prevent flicker
     setCurrentTime(0);
     setDuration(0);
     setIsPlayerReady(false); // Reset player ready state when switching videos
     setPlaying(false); // Reset playing state immediately
-    
+
     // Reset cursor position when switching videos to prevent showing at old position
     setCursorPosition({ x: 0, y: 0 });
     cursorPositionInitialized.current = false;
-    
+
     // Show controls when switching videos
     setShowControls(true);
     clearHideControlsTimer();
-    
+
     // Don't hide player during video switch (only on initial load)
     player
       .loadVideo(vimeoId)
@@ -182,15 +185,15 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
   const togglePlay = async () => {
     const player = playerInstanceRef.current;
     if (!player || !isMountedRef.current) return;
-    
+
     // Trigger click animation
     setShowClickAnimation(true);
     setTimeout(() => setShowClickAnimation(false), 400);
-    
+
     try {
       const isPaused = await player.getPaused();
       if (!isMountedRef.current || !playerInstanceRef.current) return;
-      
+
       if (isPaused) {
         await player.play();
         if (!isMountedRef.current) return;
@@ -355,9 +358,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
       } unused:bg-gray-700 ${showCustomCursor && !isInExclusionZone ? "cursor-none" : ""}`}
     >
       <PlayerCursor
-        isVisible={
-          showCustomCursor && !isInExclusionZone && cursorPositionInitialized.current
-        }
+        isVisible={showCustomCursor && !isInExclusionZone && cursorPositionInitialized.current}
         cursorPosition={cursorPosition}
         showClickAnimation={showClickAnimation}
         playing={playing}
@@ -370,7 +371,7 @@ export default function VimeoPlayer({ vimeoId, thumbnail }) {
           playing && !showControls ? "cursor-none" : ""
         }`}
       >
-        <PlayerPlaceholder thumbnail={thumbnail} isPlayerReady={isPlayerReady} />
+        <PlayerPlaceholder cover={cover} isPlayerReady={isPlayerReady} />
 
         {/* Vimeo iframe */}
         <div
