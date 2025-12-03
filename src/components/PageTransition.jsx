@@ -1,11 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 
 export default function PageTransition({ children }) {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Detect viewport width on client
+  useEffect(() => {
+    const checkSize = () => setIsMobile(window.innerWidth < 768);
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
+  }, []);
+
+  // If NOT mobile → no transition wrapper
+  if (!isMobile) return children;
+
+  // Mobile → run transition
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -24,4 +38,3 @@ export default function PageTransition({ children }) {
     </AnimatePresence>
   );
 }
-
