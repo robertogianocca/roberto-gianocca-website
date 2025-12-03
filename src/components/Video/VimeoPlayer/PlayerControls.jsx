@@ -3,8 +3,10 @@
 import { motion } from "motion/react";
 
 import PlayerVolume from "./PlayerVolume";
+import PlayButton from "./VimeoPlayerIcons/PlayButton";
 import FullScreen from "./VimeoPlayerIcons/FullScreen";
 import ProgressBar from "./ProgressBar";
+import { Play } from "next/font/google";
 
 export default function PlayerControls({
   showControls,
@@ -41,21 +43,47 @@ export default function PlayerControls({
       }}
     >
       <div className="flex justify-between items-center px-4 pt-3 pb-1">
-        <PlayerVolume
+        {/* ========== Mobile Stamps and Volume ========== */}
+        <div className="sm:hidden flex">
+          <PlayerVolume
+            volume={volume}
+            onToggleMute={onToggleMute}
+            onVolumeChange={onVolumeChange}
+            fullscreen={fullscreen}
+          />
+
+          <span className="ml-4 text-[0.7rem] sm:text-xs text-green-500  pb-1">
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </span>
+        </div>
+        {/* ========== Volume ========== */}
+        <div className="hidden sm:block">
+          <PlayerVolume
+            volume={volume}
+            onToggleMute={onToggleMute}
+            onVolumeChange={onVolumeChange}
+            fullscreen={fullscreen}
+          />
+        </div>
+        {/* ========== Mobile Play Button ========== */}
+        {/* <PlayButton
+          size={32}
+          className="sm:hidden text-player-controls"
+          playing={false}
           volume={volume}
           onToggleMute={onToggleMute}
           onVolumeChange={onVolumeChange}
           fullscreen={fullscreen}
-        />
-
-        <span className="text-xs text-green-500 absolute left-1/2 -translate-x-1/2 pb-1">
+        /> */}
+        {/* ========== Time Stamps ========== */}
+        <span className="hidden sm:block text-[0.7rem] sm:text-xs text-green-500 absolute left-1/2 -translate-x-1/2 pb-1">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>
-
         <button
           onClick={onToggleFullscreen}
           className={`translate-y-[-0px] ${fullscreen ? "pr-130" : ""}`}
         >
+          {/* ========== Full Screen button ========== */}
           <FullScreen />
         </button>
       </div>
@@ -78,4 +106,3 @@ export default function PlayerControls({
     </motion.div>
   );
 }
-

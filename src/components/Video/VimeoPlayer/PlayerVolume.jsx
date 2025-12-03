@@ -23,21 +23,21 @@ export default function PlayerVolume({ volume, onToggleMute, onVolumeChange, ful
     const clickX = clientX - inputRect.left;
     const width = inputRect.width;
     const percent = Math.max(0, Math.min(1, clickX / width));
-    
+
     // Create a synthetic event for the onChange handler
     const syntheticEvent = {
       target: {
         value: percent.toString(),
       },
     };
-    
+
     onVolumeChange(syntheticEvent);
   };
 
   const handleSliderMouseDown = (e) => {
     // Don't handle if it's on the input itself (let the input handle it)
     if (e.target.tagName === "INPUT") return;
-    
+
     e.preventDefault();
     setIsDragging(true);
     updateVolumeFromPosition(e.clientX);
@@ -78,10 +78,7 @@ export default function PlayerVolume({ volume, onToggleMute, onVolumeChange, ful
   return (
     <div className={`flex items-center cursor-pointer ${fullscreen ? "pl-130" : ""}`}>
       {/* Volume Icon */}
-      <button 
-        onClick={onToggleMute}
-        className="cursor-pointer p-2 -m-2"
-      >
+      <button onClick={onToggleMute} className="cursor-pointer p-2 -m-2">
         {volume === 0 ? (
           <VolumeX />
         ) : volume < 0.3 ? (
@@ -98,7 +95,7 @@ export default function PlayerVolume({ volume, onToggleMute, onVolumeChange, ful
         ref={(node) => {
           sliderContainerRef.current = node;
         }}
-        className="flex items-center translate-y-[-3px] pl-2 w-30 opacity-100 cursor-pointer py-2 -my-2 relative select-none"
+        className="hidden sm:flex items-center translate-y-[-3px] pl-2 w-30 opacity-100 cursor-pointer py-2 -my-2 relative select-none"
         onMouseDown={handleSliderMouseDown}
         onMouseMove={handleSliderMouseMove}
         onMouseUp={handleSliderMouseUp}
