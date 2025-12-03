@@ -39,7 +39,7 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
 
       {/* Desktop Title and Subtitle with animation */}
       <motion.div
-        key={`title-${selectedVideo.id}`}
+        key={`desktop-title-${selectedVideo.id}`}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
