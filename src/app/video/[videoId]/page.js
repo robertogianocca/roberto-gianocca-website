@@ -1,3 +1,5 @@
+// VIDEO PAGE DESCRIPTION
+
 import MenuBar from "@/components/MenuBar";
 import VideoSection from "@/components/Video/VideoSection";
 import VideoDetails from "@/components/Video/VideoDetails";
@@ -38,21 +40,18 @@ export default async function VideoPage({ params }) {
   }
 
   return (
-    <div>
-      <div className="main-grid h-screen px-10">
-        <div className="hidden md:block col-span-1 pt-10">
-          <MenuBar />
-        </div>
+    <div className="main-grid px-2 lg:px-10">
+      <div className="hidden lg:block col-span-1 pt-10">
+        <MenuBar />
+      </div>
+      <div className="hidden lg:block col-span-4">
+        {/* Desktop: Show full VideoSection with thumbnails and details */}
+        <VideoSection initialVideoId={videoId} />
 
-        <div className="col-span-4">
-          {/* Desktop: Show full VideoSection with thumbnails and details */}
-          <VideoSection initialVideoId={videoId} />
-
-          {/* Mobile: Show only video details (player + descriptions) */}
-          <div className="block md:hidden">
-            <VideoDetails selectedVideo={video} isStandalone={true} />
-          </div>
-        </div>
+        {/* Mobile: Show only video details (player + descriptions) */}
+      </div>
+      <div className="lg:hidden">
+        <VideoDetails selectedVideo={video} isStandalone={true} />
       </div>
     </div>
   );

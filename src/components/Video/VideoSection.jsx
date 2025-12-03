@@ -14,7 +14,7 @@ export default function VideoSection({ initialVideoId }) {
 
   useEffect(() => {
     setHasMounted(true);
-    
+
     const checkIsDesktop = () => {
       setIsDesktop(window.innerWidth >= DESKTOP_BREAKPOINT);
     };
@@ -68,16 +68,12 @@ export default function VideoSection({ initialVideoId }) {
   }
 
   return (
-    <div className="content-grid ">
+    <div className="content-grid">
       <div className="w-full h-[calc(100vh)] overflow-auto scrollbar-hide pt-10 col-span-1">
-        <VideoThumbnails
-          selectedVideo={selectedVideo}
-          onVideoChange={handleVideoChange}
-        />
+        <VideoThumbnails selectedVideo={selectedVideo} onVideoChange={handleVideoChange} />
       </div>
 
       <VideoDetails selectedVideo={selectedVideo} />
     </div>
   );
 }
-

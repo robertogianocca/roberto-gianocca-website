@@ -4,20 +4,31 @@ import ImageCarousel from "../components/ImageCarousel/ImageCarousel";
 
 export const videoDescriptions = {
   "sugar-mama": (
-    <div className="relative aspect-auto ">
-      <p className="font-jet-brains text-credits mb-4 mt-4 opacity-60">
-        Song Composers:
-        <CreditsName>Mattia Pascale - Matteo Magnaterra - Fabrizio Grossi</CreditsName>
-        Video Director:<CreditsName>Roberto Gianocca</CreditsName>Assistant Director:
-        <CreditsName>Shondel Bervini</CreditsName>Editing & Post-production:
-        <CreditsName>Roberto Gianocca</CreditsName>Executive Producers:
-        <CreditsName>Roberto Gianocca - Paolo Maspoli</CreditsName>
-        Styling & Costumes:<CreditsName>Shondel Bervini</CreditsName>Make-up & Hair:
-        <CreditsName>Sofia Buob</CreditsName>Performers:
-        <CreditsName>Matt Pascale - Sofia Buob - Shondel Bervini</CreditsName>Special Thanks:
+    <div className="relative w-full flex flex-col flex-nowrap lg:flex-row lg:flex-wrap font-jet-brains text-2xs text-credits mb-4 mt-4 opacity-60">
+      <p>
+        Direction, Editing, Post-production:<CreditsName>Roberto Gianocca</CreditsName>
+      </p>
+      <p>
+        Assistant Director:
+        <CreditsName>Shondel Bervini</CreditsName>
+      </p>
+      <p>
+        Styling & Costumes:
+        <CreditsName>Shondel Bervini, Sofia Buob</CreditsName>
+      </p>
+      <p>
+        Make-up & Hair:
+        <CreditsName>Sofia Buob</CreditsName>
+      </p>
+      <p>
+        Performers:
+        <CreditsName>Matt Pascale, Sofia Buob, Shondel Bervini</CreditsName>
+      </p>
+      <p>
+        Special Thanks:
         <CreditsName>
-          Elia Squartini - Gianni Muggeo - Andrea Zanni - Alan Fraquelli - Maurizio Faggi - Giulia
-          Campiglia - Wabi the Dog
+          Elia Squartini, Gianni Muggeo, Andrea Zanni, Alan Fraquelli, Maurizio Faggi, Giulia
+          Campiglia, Wabi the Dog
         </CreditsName>
       </p>
 

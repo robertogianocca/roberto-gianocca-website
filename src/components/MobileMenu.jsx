@@ -11,7 +11,7 @@ export default function MobileMenu() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         type="button"
         aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -87,4 +87,3 @@ export default function MobileMenu() {
     </div>
   );
 }
-
