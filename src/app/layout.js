@@ -1,6 +1,7 @@
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Background from "@/components/Background/Background";
+import MobileMenu from "@/components/MobileMenu";
 
 // Configure the font
 const inter = Inter({
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         className={`${inter.variable} ${jetBrains.variable} antialiased text-gray-400 text-xs font-inter`}
       >
         <Background color="#456DFF" />
+        <MobileMenu />
         {children}
       </body>
     </html>

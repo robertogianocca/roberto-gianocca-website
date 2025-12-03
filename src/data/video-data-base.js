@@ -16,7 +16,7 @@ export const videoDataBase = [
     title: "Sugar Mama",
     subtitle: "video 2",
     description: videoDescriptions["sugar-mamatr"],
-    cover: "/vido/sugar-mama/sugar-mama-cover.jpg",
+    cover: "/video/sugar-mama/sugar-mama-cover.jpg",
     thumbnail: "/video-thumbnails/sugar-mama-thumb_02.jpg",
   },
 ];
