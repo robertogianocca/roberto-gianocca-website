@@ -2,6 +2,9 @@
   "name": "sito-web-roberto-gianocca",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -19,10 +22,10 @@
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "eslint": "^9",
+    "@eslint/eslintrc": "^3.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.7",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4.0.0"
   }
 }

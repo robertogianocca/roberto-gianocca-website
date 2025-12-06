@@ -1,16 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import ReactPlayer from "react-player";
 
-import Player from "@vimeo/player";
-
-import PlayerControls from "./PlayerControls";
-import PlayerCursor from "./PlayerCursor";
-import PlayerPlaceholder from "./PlayerPlaceholder";
+import PlayerControls from "./PlayerControls"; // your custom controls
+import PlayerCursor from "./PlayerCursor"; // custom cursor
+import PlayerPlaceholder from "./PlayerPlaceholder"; // cover image
 
 export default function VimeoPlayer({ vimeoId, cover }) {
-  const containerRef = useRef(null);
   const playerRef = useRef(null);
+  const containerRef = useRef(null);
 
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -18,158 +17,38 @@ export default function VimeoPlayer({ vimeoId, cover }) {
   const [volume, setVolume] = useState(1);
   const [previousVolume, setPreviousVolume] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
   const [hoverTime, setHoverTime] = useState(null);
   const [hoverX, setHoverX] = useState(0);
-  const [showControls, setShowControls] = useState(true);
-  const [isDraggingProgress, setIsDraggingProgress] = useState(false);
-
-  // Loading state for smooth transition
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-
-  // Animation state for click feedback
-  const [showClickAnimation, setShowClickAnimation] = useState(false);
-
-  // Nuovi stati per il cursore personalizzato
   const [showCustomCursor, setShowCustomCursor] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isInExclusionZone, setIsInExclusionZone] = useState(false);
-  const cursorPositionInitialized = useRef(false);
+  const [showClickAnimation, setShowClickAnimation] = useState(false);
 
-  // Configurazione zona di esclusione (puoi modificare questo valore)
-  const EXCLUSION_ZONE_HEIGHT = 90; // px dal fondo
-
-  const playerInstanceRef = useRef(null);
   const hideControlsTimeout = useRef(null);
-  const isMountedRef = useRef(true);
 
-  useEffect(() => {
-    isMountedRef.current = true;
-
-    if (!playerRef.current) return;
-
-    const vimeoPlayer = new Player(playerRef.current, {
-      id: vimeoId,
-      width: 640,
-      controls: false,
-      volume: 1,
-    });
-
-    playerInstanceRef.current = vimeoPlayer;
-    vimeoPlayer.setVolume(volume);
-
-    // Reset duration and currentTime to prevent flicker
-    setDuration(0);
-    setCurrentTime(0);
-
-    vimeoPlayer
-      .getDuration()
-      .then((d) => {
-        if (isMountedRef.current) setDuration(d);
-      })
-      .catch(() => {});
-
-    // Listen for the 'loaded' event to know when player is ready
-    vimeoPlayer.on("loaded", () => {
-      if (isMountedRef.current) {
-        setIsPlayerReady(true);
-        setShowControls(true);
-        clearHideControlsTimer();
-      }
-    });
-
-    vimeoPlayer.on("timeupdate", (data) => {
-      if (isMountedRef.current) setCurrentTime(data.seconds);
-    });
-    vimeoPlayer.on("play", () => {
-      if (isMountedRef.current) {
-        setPlaying(true);
-        startHideControlsTimer();
-      }
-    });
-    vimeoPlayer.on("pause", () => {
-      if (isMountedRef.current) {
-        setPlaying(false);
-        setShowControls(true);
-        clearHideControlsTimer();
-      }
-    });
-    vimeoPlayer.on("playing", () => {
-      if (isMountedRef.current) setPlaying(true);
-    });
-    vimeoPlayer.on("paused", () => {
-      if (isMountedRef.current) setPlaying(false);
-    });
-
-    const handleFullscreenChange = () => {
-      if (!isMountedRef.current) return;
-      const isFullscreen = !!document.fullscreenElement;
-      setFullscreen(isFullscreen);
-
-      if (isFullscreen && window.innerHeight > window.innerWidth) {
-        try {
-          screen.orientation.lock("landscape").catch(() => {});
-        } catch (e) {}
-      }
-    };
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    return () => {
-      isMountedRef.current = false;
-      playerInstanceRef.current = null;
-      vimeoPlayer.destroy().catch(() => {});
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    const player = playerInstanceRef.current;
-    if (!player || !vimeoId || !isMountedRef.current) return;
-
-    // Reset immediately to prevent flicker
-    setCurrentTime(0);
-    setDuration(0);
-    setIsPlayerReady(false); // Reset player ready state when switching videos
-    setPlaying(false); // Reset playing state immediately
-
-    // Reset cursor position when switching videos to prevent showing at old position
-    setCursorPosition({ x: 0, y: 0 });
-    cursorPositionInitialized.current = false;
-
-    // Show controls when switching videos
+  // --------------------------
+  // Player events
+  // --------------------------
+  const onPlay = () => {
+    setPlaying(true);
+    startHideControlsTimer();
+  };
+  const onPause = () => {
+    setPlaying(false);
     setShowControls(true);
     clearHideControlsTimer();
+  };
+  const onProgress = ({ playedSeconds }) => {
+    setCurrentTime(playedSeconds);
+  };
+  const onDuration = (d) => {
+    setDuration(d);
+  };
 
-    // Don't hide player during video switch (only on initial load)
-    player
-      .loadVideo(vimeoId)
-      .then(() => {
-        if (!isMountedRef.current || !playerInstanceRef.current) return;
-        setCurrentTime(0);
-        setPlaying(false);
-        setIsPlayerReady(true); // Set player as ready after video loads
-        return playerInstanceRef.current.getDuration();
-      })
-      .then((d) => {
-        if (!isMountedRef.current || !playerInstanceRef.current) return;
-        if (d !== undefined) setDuration(d);
-        // Double-check that player is paused after loading
-        return playerInstanceRef.current.getPaused();
-      })
-      .then((paused) => {
-        if (!isMountedRef.current) return;
-        // Sync state with actual player state
-        if (paused !== undefined) setPlaying(!paused);
-      })
-      .catch(() => {
-        // Silently ignore errors from unmounted/destroyed player
-        if (!isMountedRef.current) return;
-        setIsPlayerReady(true); // Set ready even on error to hide thumbnail
-        setPlaying(false); // Ensure playing state is false on error
-      });
-  }, [vimeoId]);
-
-  // qui viene gestito il tempo di sparizione di tutti i controlli.
+  // --------------------------
+  // Controls timer
+  // --------------------------
   const startHideControlsTimer = () => {
     clearHideControlsTimer();
     hideControlsTimeout.current = setTimeout(() => {
@@ -177,106 +56,62 @@ export default function VimeoPlayer({ vimeoId, cover }) {
       setShowCustomCursor(false);
     }, 1500);
   };
-
   const clearHideControlsTimer = () => {
     if (hideControlsTimeout.current) clearTimeout(hideControlsTimeout.current);
   };
 
-  const togglePlay = async () => {
-    const player = playerInstanceRef.current;
-    if (!player || !isMountedRef.current) return;
+  // --------------------------
+  // Play/pause toggle
+  // --------------------------
+  const togglePlay = () => {
+    const internalPlayer = playerRef.current?.getInternalPlayer();
+    if (!internalPlayer) return;
 
-    // Trigger click animation
     setShowClickAnimation(true);
     setTimeout(() => setShowClickAnimation(false), 400);
 
-    try {
-      const isPaused = await player.getPaused();
-      if (!isMountedRef.current || !playerInstanceRef.current) return;
-
-      if (isPaused) {
-        await player.play();
-        if (!isMountedRef.current) return;
-        setPlaying(true);
-        startHideControlsTimer();
-      } else {
-        await player.pause();
-        if (!isMountedRef.current) return;
-        setPlaying(false);
-        setShowControls(true);
-        clearHideControlsTimer();
-      }
-    } catch {
-      // Silently ignore errors from unmounted/destroyed player
+    if (playing) {
+      internalPlayer.pause();
+      setPlaying(false);
+      setShowControls(true);
+      clearHideControlsTimer();
+    } else {
+      internalPlayer.play();
+      setPlaying(true);
+      startHideControlsTimer();
     }
   };
 
-  // FUNZIONE PER VERIFICARE SE IL MOUSE È NELLA ZONA DI ESCLUSIONE
-  const checkIfInExclusionZone = useCallback((clientY, containerRect) => {
-    if (!containerRect) return false;
+  // --------------------------
+  // Volume
+  // --------------------------
+  const changeVolume = (v) => {
+    const internalPlayer = playerRef.current?.getInternalPlayer();
+    if (!internalPlayer) return;
 
-    // Calcola la distanza dal fondo del container
-    const distanceFromBottom = containerRect.bottom - clientY;
-
-    // Se il mouse è entro EXCLUSION_ZONE_HEIGHT pixel dal fondo, è nella zona di esclusione
-    return distanceFromBottom <= EXCLUSION_ZONE_HEIGHT;
-  }, []);
-
-  // MODIFICHE PER IL CURSORE PERSONALIZZATO
-  const handleMouseEnter = () => {
-    setShowCustomCursor(true);
-    setShowControls(true);
+    internalPlayer.setVolume(v);
+    setVolume(v);
+    if (v > 0) setPreviousVolume(v);
   };
 
-  const handleMouseLeave = () => {
-    setShowCustomCursor(false);
-    setShowControls(false);
-    setIsInExclusionZone(false);
-    clearHideControlsTimer();
+  const toggleMute = () => {
+    if (volume > 0) {
+      changeVolume(0);
+    } else {
+      changeVolume(previousVolume);
+    }
   };
 
-  const handleMouseMove = useCallback(
-    (e) => {
-      setShowControls(true);
-
-      // Ottieni le dimensioni del container
-      const containerRect = containerRef.current?.getBoundingClientRect();
-      if (!containerRect) return;
-
-      // Verifica se il mouse è nella zona di esclusione
-      const inExclusionZone = checkIfInExclusionZone(e.clientY, containerRect);
-      setIsInExclusionZone(inExclusionZone);
-
-      // Mostra il cursore custom solo se NON è nella zona di esclusione
-      if (!inExclusionZone) {
-        // Always update cursor position from actual mouse event
-        const newPosition = {
-          x: e.clientX,
-          y: e.clientY,
-        };
-        setCursorPosition(newPosition);
-        setShowCustomCursor(true);
-        cursorPositionInitialized.current = true;
-      } else {
-        setShowCustomCursor(false);
-      }
-
-      if (playing) {
-        startHideControlsTimer();
-      }
-    },
-    [playing, checkIfInExclusionZone]
-  );
-
+  // --------------------------
+  // Progress bar
+  // --------------------------
   const handleProgressChange = (e) => {
-    if (!playerInstanceRef.current) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const clientX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
-
     const percent = (clientX - rect.left) / rect.width;
     const newTime = Math.min(Math.max(percent * duration, 0), duration);
 
-    playerInstanceRef.current.setCurrentTime(newTime);
+    playerRef.current?.seekTo(newTime, "seconds");
     setCurrentTime(newTime);
   };
 
@@ -286,61 +121,43 @@ export default function VimeoPlayer({ vimeoId, cover }) {
     setHoverTime(percent * duration);
     setHoverX(percent * 100);
   };
-
   const handleProgressLeave = () => setHoverTime(null);
 
+  // --------------------------
+  // Fullscreen
+  // --------------------------
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
-
     if (!fullscreen) {
-      containerRef.current.requestFullscreen().then(() => {
-        if (window.innerHeight > window.innerWidth) {
-          try {
-            screen.orientation.lock("landscape").catch(() => {});
-          } catch (e) {}
-        }
-      });
+      containerRef.current.requestFullscreen().catch(() => {});
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(() => {});
     }
   };
 
-  // LOGICA VOLUME
-  const changeVolume = (e) => {
-    const v = parseFloat(e.target.value);
-    playerInstanceRef.current?.setVolume(v);
+  // --------------------------
+  // Cursor logic
+  // --------------------------
+  const handleMouseMove = useCallback(
+    (e) => {
+      setShowControls(true);
+      setShowCustomCursor(true);
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+      if (playing) startHideControlsTimer();
+    },
+    [playing]
+  );
 
-    setVolume(v);
-    if (v > 0) setPreviousVolume(v);
-  };
-
-  const toggleMute = () => {
-    if (!playerInstanceRef.current) return;
-
-    if (volume > 0) {
-      playerInstanceRef.current.setVolume(0);
-      setVolume(0);
-    } else {
-      playerInstanceRef.current.setVolume(previousVolume);
-      setVolume(previousVolume);
-    }
-  };
-
-  const handleTouchStart = (e) => {
-    setIsDraggingProgress(true);
-    setShowControls(true);
+  const handleMouseEnter = () => setShowCustomCursor(true);
+  const handleMouseLeave = () => {
+    setShowCustomCursor(false);
+    setShowControls(false);
     clearHideControlsTimer();
-    handleProgressChange(e);
-  };
-  const handleTouchMove = (e) => {
-    if (isDraggingProgress) handleProgressChange(e);
-    e.preventDefault();
-  };
-  const handleTouchEnd = () => {
-    setIsDraggingProgress(false);
-    if (playing) startHideControlsTimer();
   };
 
+  // --------------------------
+  // Time formatting
+  // --------------------------
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60);
     const s = String(Math.floor(seconds % 60)).padStart(2, "0");
@@ -353,40 +170,48 @@ export default function VimeoPlayer({ vimeoId, cover }) {
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`max-w-full relative ${
-        fullscreen ? "!w-screen !h-screen !max-w-none p-0" : "max-w-3xl"
-      } unused:bg-gray-700 ${showCustomCursor && !isInExclusionZone ? "cursor-none" : ""}`}
+      className={`max-w-full relative ${fullscreen ? "!w-screen !h-screen" : "max-w-3xl"} ${
+        showCustomCursor ? "cursor-none" : ""
+      }`}
     >
+      {/* Custom cursor */}
       <PlayerCursor
-        isVisible={showCustomCursor && !isInExclusionZone && cursorPositionInitialized.current}
+        isVisible={showCustomCursor}
         cursorPosition={cursorPosition}
         showClickAnimation={showClickAnimation}
         playing={playing}
         isPlayerReady={isPlayerReady}
       />
 
-      {/* VIDEO WRAPPER */}
-      <div
-        className={`relative w-full ${fullscreen ? "h-screen" : "aspect-video"} ${
-          playing && !showControls ? "cursor-none" : ""
-        }`}
-      >
+      {/* Video wrapper */}
+      <div className={`relative w-full ${fullscreen ? "h-screen" : "aspect-video"}`}>
+        {/* Placeholder */}
         <PlayerPlaceholder cover={cover} isPlayerReady={isPlayerReady} />
 
-        {/* Vimeo iframe */}
-        <div
+        {/* ReactPlayer iframe */}
+        <ReactPlayer
           ref={playerRef}
-          className={`vimeo-player w-full h-full transition-opacity duration-500 relative z-0 ${
-            fullscreen ? "absolute inset-0" : ""
-          } ${isPlayerReady ? "opacity-100" : "opacity-0"}`}
-        ></div>
+          url={`https://vimeo.com/${vimeoId}`}
+          playing={playing}
+          volume={volume}
+          controls={false} // hide default Vimeo controls
+          width="100%"
+          height="100%"
+          onReady={() => {
+            setIsPlayerReady(true); // placeholder can fade
+            // fetch duration
+            const internalPlayer = playerRef.current?.getInternalPlayer();
+            internalPlayer?.getDuration().then((d) => setDuration(d));
+          }}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onProgress={({ playedSeconds }) => setCurrentTime(playedSeconds)}
+        />
 
-        {/* Overlay click area */}
-        <div
-          className="absolute inset-0 z-10"
-          onClick={() => !isDraggingProgress && togglePlay()}
-        ></div>
+        {/* Click overlay */}
+        <div className="absolute inset-0 z-10" onClick={togglePlay}></div>
 
+        {/* Custom controls */}
         <PlayerControls
           showControls={showControls}
           isPlayerReady={isPlayerReady}
@@ -403,9 +228,6 @@ export default function VimeoPlayer({ vimeoId, cover }) {
           onProgressChange={handleProgressChange}
           onProgressHover={handleProgressHover}
           onProgressLeave={handleProgressLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
         />
       </div>
     </div>
