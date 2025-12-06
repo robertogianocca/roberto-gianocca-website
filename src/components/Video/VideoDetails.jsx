@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import VidStackPlayer from "./VidStackPlayer/VidStackPlayer";
+import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 import VideoSecondaryThumbnails from "./VideoSecondaryThumbnails";
 import VideoInteractiveCarousel from "./VideoInteractiveCarousel";
 
@@ -34,7 +34,7 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
           ease: [0.16, 1, 0.3, 1], // Custom easing for smooth feel
         }}
       >
-        <VidStackPlayer />
+        <VimeoPlayer vimeoId={selectedVideo.vimeoId} cover={selectedVideo.cover} />
       </motion.div>
 
       {/* Desktop Title and Subtitle with animation */}
