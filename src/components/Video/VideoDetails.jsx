@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import VimeoPlayer from "@/components/Video/VimeoPlayer/VimeoPlayer";
 import VideoSecondaryThumbnails from "./VideoSecondaryThumbnails";
 import VideoInteractiveCarousel from "./VideoInteractiveCarousel";
+import VidStackPlayer from "./VidStackPlayer/VidStackPlayer";
 
 export default function VideoDetails({ selectedVideo, isStandalone = false }) {
   return (
@@ -34,7 +35,8 @@ export default function VideoDetails({ selectedVideo, isStandalone = false }) {
           ease: [0.16, 1, 0.3, 1], // Custom easing for smooth feel
         }}
       >
-        <VimeoPlayer vimeoId={selectedVideo.vimeoId} cover={selectedVideo.cover} />
+        {/* <VimeoPlayer vimeoId={selectedVideo.vimeoId} cover={selectedVideo.cover} /> */}
+        <VidStackPlayer videoId={selectedVideo.vimeoId} />
       </motion.div>
 
       {/* Desktop Title and Subtitle with animation */}
