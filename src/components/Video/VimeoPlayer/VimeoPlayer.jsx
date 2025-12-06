@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import ReactPlayer from "react-player";
 
 import PlayerControls from "./PlayerControls"; // your custom controls
 import PlayerCursor from "./PlayerCursor"; // custom cursor
